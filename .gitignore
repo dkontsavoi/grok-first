@@ -1,0 +1,7 @@
+.env
+*.env
+**/*secret*
+**/*credential*
+**/binance*.json
+**/coinglass*
+**/*api*key*
