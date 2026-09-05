@@ -34,3 +34,11 @@
 
 CMC: F&G ~75 Greed; alt-season ~40 (rising, still BTC-leaning); BTC dom ~59%; OI soft; BTC 24h liqs quiet (~$7.9M, −93% vs prior day); funding mixed/elevated vs recent.  
 → Orchestrator example bias in Main: prefer selective `BUY_DIP` / `RS_DIP` / `CORE_DCA`; de-prioritize chasey `MOM` and thin Tier-C; `FLUSH_MR` on standby until Flush:ON.
+
+## Router clarification (2026-09-06)
+
+**One cron only (Main).** Main is a **regime gate + per-coin router + compiler**.
+
+- It **can and should** select **different strategies for different coins in one run**.
+- It does **not** pick a single strategy for the entire book (except when the gate collapses to core-only / FLUSH_MR).
+- See `Main-PROMPT.router-section.proposed.md` for the exact select flow.
