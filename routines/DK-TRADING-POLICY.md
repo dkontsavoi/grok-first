@@ -80,6 +80,17 @@ Price alert (restricted-list coin)
 - Every Tactical run enters Flow 1 before new risk (same one-re-dig cap).
 - Does not replace Book q4h; complements it for intraday zone/inv events.
 
+
+## 2d. Agent messaging — no ack ping-pong (LOCKED 2026-09-06)
+
+**Rule:** Agents must **not** send peer messages that are only acknowledgements / empty FYIs (“Ack”, “Got it”, “Noted”, “Confirming live” with no new payload).
+
+**Allowed peer messages:** decisions, dig results, exec reports (order ids/sizes), Flow 1 coin lists, policy locks, blockers needing action.
+
+**Why:** Each `[agent]` wake is billable (steps + tokens). Ack ping-pong burns usage without trading value.
+
+**Unchanged:** Flow 1, Flow 2 cadence (`*/10`), user-facing notifies when there is a real result.
+
 ## 3. Hard constraints (live until DK changes)
 
 ### 3.1 Universe & direction
