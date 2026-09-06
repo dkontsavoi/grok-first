@@ -62,7 +62,7 @@ Standing operating sequence for each Book (and Tactical when it surfaces actiona
 - Main remains policy gate; DK remains principal; Second research-only.
 
 
-## 2c. Flow 2 — Alert → Tactical → Flow 1 (PROPOSED 2026-09-06)
+## 2c. Flow 2 — Alert → Tactical → Flow 1 (LOCKED 2026-09-06)
 
 ```
 Price alert (restricted-list coin)
@@ -72,7 +72,7 @@ Price alert (restricted-list coin)
   → Next alert or next Book
 ```
 
-**Status:** Intent locked by DK; **alert delivery plumbing TBD** — Second investigating (`revx monitor`, CMC, webhooks, cron poll, Telegram). Adopt primary channel after Dig lands.
+**Status:** Locked. **Primary:** Main cron every **10m** polls RevX mids vs `/workspace/crypto-self-reflect/active_levels.json` (First updates after Book). On touch → Tactical → Flow 1. Cooldown ~45m/level. **Backup:** `revx monitor price` on top 3–5 active levels (+ Telegram / events). Schema: `flow2/active_levels.schema.md`.
 
 **Rules (intent):**
 - Alerts only for restricted-list names (and levels from Book/Tactical/inv/TP).
