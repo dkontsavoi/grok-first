@@ -1,0 +1,256 @@
+# DK Trading Policy — Main’s understanding
+
+**As-of:** 2026-09-06 (Europe/Madrid)  
+**Author:** Main (policy coordinator)  
+**Status:** Working draft for DK review — not a substitute for live Book/Tactical prompts until you adopt changes  
+**Sources:** live Book / Main / Tactical prompts on box, proposed router pack (`grok-first` PR #2 / `/workspace/grok-first-proposed`), agent memories, chat locks with DK / First / Second
+
+---
+
+## 1. Cornerstone (goal)
+
+**Team goal:** grow Revolut X spot account **profit** in a **consistent** way — not max one-shot upside.
+
+> **UNCLEAR (your message cut off):**  
+> *“The corner stone of the policy - our goal as a team to get the profit on the account in the consistent and…”*  
+> **Assumed finish:** *“…consistent and sustainable way (drawdown-aware, process over heroics).”*
+
+**Suggested full sentence (pick / edit):**
+
+> Our goal as a team is to grow account profit **consistently and sustainably** — by enforcing written risk rules, pairing every entry with an exit, and only taking setups the regime + per-coin router allow.
+
+**What “consistent” should mean in practice (suggestion):**
+
+| Metric | Suggested definition | Status |
+|--------|----------------------|--------|
+| Process consistency | Every Book/Tactical cycle follows regime gate → router → caps → exits | Partially live (Book has hybrid rules; full router not adopted) |
+| P&L consistency | Prefer many small +EV trades over rare large bets; night heat caps bound overnight risk | Caps exist; **no stated target win-rate / R-multiple / max DD** |
+| Decision consistency | Same coin + same tape → same `strategy_id` or SKIP; Main decides day confirms after 1h silence | Locked in chat |
+
+---
+
+## 2. Roles (who does what)
+
+| Actor | Role | May change policy? | May place day orders? | May place night orders? |
+|-------|------|--------------------|------------------------|-------------------------|
+| **DK** | Principal | Yes (only he) | Yes (confirm / override) | Standing night rules he already approved |
+| **Main** (this agent) | Policy coordinator / digital copy | No — enforce & escalate | Yes after ping→1h silence, **within policy only** | No direct; sets what First may auto |
+| **First** | Execution (Book, Tactical, RevX) | No | Only after Main/DK confirm | Yes, under night Book rules |
+| **Second** | Investigation / strategy research | Propose only | No | No |
+
+**Naming (locked):**
+
+- **Main** = agent (coordinator), not the cron.  
+- **Book** = every-4h brief runner First executes (was formerly named “Main” cron).  
+- **Tactical** = on-demand book hygiene / NOW tactics (suggest-only for places until confirm).
+
+---
+
+## 3. Hard constraints (live until DK changes)
+
+### 3.1 Universe & direction
+
+- **Long-only.** Never short. Never sell-to-open.
+- **Restricted list (26):**  
+  `BTC ETH ARB HYPE PUMP ENA SKY JUP AAVE AERO LDO UNI RAY POL SYRUP ZRO ICP DASH LINK CRV MORPHO SUI ZEN NEAR SOL VVV`
+- Venue: **Revolut X spot** via `revx`. Binance funding / basis / L/S = **signals only**, never a carry book.
+
+### 3.2 Style
+
+- Core style: **buy-the-dip / sell-in-strength**.
+- Every buy idea **must** pair with an exit plan (TP1 / TP2 / runner or time-stop / invalidation).
+- Complementary modes (tags / proposed strategies): `BUY_DIP`, `FLUSH_MR`, `MOM`, `RS_DIP`, `CORE_DCA`, `CATALYST`.
+
+### 3.3 Night auto (standing approval) — Europe/Madrid
+
+| Rule | Value |
+|------|--------|
+| Night window | 22:00–08:00 (22 inclusive → 08 exclusive) |
+| Day window | 08:00–21:59 → **suggest only** until confirm |
+| Per-run new buy notional | ≤ **$1000** |
+| Night cumulative new buys | ≤ **$1500–2000** (range, see unclear) |
+| Max new symbols / night | ≤ **3** |
+| Order types | Limit buys only; never market buys |
+| Sells at night | **Inventory only** (TP1/TP2); sell $ does not count vs buy cap |
+| Cancels | Allowed for bids the brief marks cancel/replace; no cancel-all |
+| Flush:ON | **$0 Tier-C** auto; prefer BTC/ETH (or ≤$300 total if bounce confirmed) |
+| MOM at night | No chase; only pre-approved continuation levels |
+
+### 3.4 Day confirmation (locked 2026-09-06)
+
+1. First proposes; **Main** owns the confirm ask.  
+2. Main **pings DK** before deciding.  
+3. If **no reply within 1 hour**, Main decides **within written policy** (no freestyle risk).  
+4. First **does not** freestyle day places/cancels on silence — waits for Main.  
+5. Night Book auto rules unchanged by this timeout.
+
+---
+
+## 4. Operating cycle (intended)
+
+```
+Regime gate (book-level)
+    → allowed_strategies + size_bias + stand_down
+Per-coin router
+    → exactly one strategy_id per ticker (or SKIP)
+Compile
+    → mixed top ideas in one Book brief
+Execute
+    → First: night auto within caps / day after confirm
+Investigate
+    → Second when routing or edge is unclear
+```
+
+**One cron mindset:** different coins may get different strategies in the **same** Book run. Never two strategies on one ticker in one run.
+
+---
+
+## 5. What is LIVE today vs PROPOSED
+
+### 5.1 Live (Book / Tactical on box)
+
+- Buy-dip hybrid with buckets: `CROWD-DIP` | `MOM` | `WATCH`
+- Flush detector + Flush alt gates
+- ATR-tier dip zones (A/B/C) + invalidation
+- Exit ladder TP1/TP2/runner/time-stop
+- Binance top-trader **POSITION** dynamics in tactics
+- Don't-fade set: `UNI ZRO VVV ICP`
+- Crowding caution: ETH/SKY/BTC/AAVE (+ LINK/ARB 4h, AERO extremes)
+- δ-momentum lean: JUP/HYPE/NEAR/LDO/RAY/SUI
+- Complementary tags exist as **tags only** (`FLUSH-MR`, `MOM`, `RS-DIP`, `CORE-DCA`) — dip remains core
+- Logging to `/workspace/crypto-self-reflect/briefs.jsonl` as `routine="Book"`
+
+### 5.2 Proposed (not adopted until DK green-lights)
+
+Repo path: `github.com/dkontsavoi/grok-first` PR #2 → `routines/proposed/strategies/`  
+Local mirror: `/workspace/grok-first-proposed/strategies/`
+
+- Full **regime gate → per-coin `strategy_id` router → compiler**
+- Strategy modules: BuyTheDip, FlushMR, Momentum, RSDip, CoreDCA, Catalyst
+- Top-6 rows as: `TICKER | strategy_id | thesis | zone | inv | size | exit`
+- Night-safe filter by `strategy_id`
+
+**Main’s job until adoption:** enforce live Book rules + chat locks; help DK/First align when you green-light the router.
+
+---
+
+## 6. Regime & Flush (live)
+
+**Flush:ON** if any of:
+
+- BTC 1h high–low ≳ 1.5% of spot, **or**
+- Clear long-liq spike, **or**
+- OI/price shock
+
+When ON:
+
+1. Do not keep Range as highest BTC/ETH prob; Bear ≥40% unless clear short-flush bounce.  
+2. No new Tier-C auto/night (PUMP, VVV, MORPHO, SYRUP, other thin).  
+3. Tier-B only if that coin’s own 1h range already exceeds threshold **and** long-liq character supportive.  
+4. Prefer BTC/ETH until Flush off or short-flush bounce confirmed.  
+5. After long-flush: deeper resting limits; avoid market-adjacent fills until 15m/1h reclaim.
+
+**Proposed gate rubric (extra, not live as orchestrator):** F&G, greed/quiet, risk-on RS leaders, quiet range → `allowed_strategies` + `size_bias` (normal | reduce | core-only).
+
+---
+
+## 7. Entries, sizing, exits (live summary)
+
+### Zones
+
+| Tier | Examples | Mid depth guide |
+|------|----------|-----------------|
+| A | BTC, ETH | ~1.0–2.0% |
+| B | SOL, LINK, AAVE, ARB, SUI, … | ~2–4% |
+| C | PUMP, VVV, MORPHO, SYRUP, … | ~3–6%; smaller $; need Flush-off or BTC-stable |
+
+Width ≈ `max(1.5%, k × ATR_1h)`, k ≈ 0.75–1.25. Default 2–3 rungs. Deeper size only if crowding cooling **or** long-flush — not blind average-down.
+
+### Exits (required with every buy)
+
+| Step | Rule |
+|------|------|
+| TP1 | ~+1R or reclaim of pre-dip mid — sell 30–40% |
+| TP2 | ~+2R or local swing / VWAP reclaim fail — sell 30–40% |
+| Runner | Trail under prior 1h/4h HL; **or** time-stop 24–48h if no TP1 / new HH |
+| Invalidation | SL at inv on fill; close < inv → cancel remaining ladder + soft exit |
+
+Cancel stale buy bids older than **8–12h**, or when Flush:ON moves inv through the bid.
+
+Prefer night ladders ~**$100–$150** per rung, still under caps.
+
+---
+
+## 8. Data stack
+
+| Source | Use |
+|--------|-----|
+| CoinMarketCap | Quotes, technicals, global; resolve ticker collisions |
+| Revolut X (`revx`) | Live balances, open orders, place/cancel |
+| Binance public (`www.binance.com`) | Top-trader POSITION L/S (primary), funding, OI, basis, premium |
+| Liquidations | Xoomar primary; ByKaranteli backup |
+
+---
+
+## 9. Unclear areas & fix suggestions
+
+| # | Unclear | Why it matters | Suggested fix |
+|---|---------|----------------|---------------|
+| U1 | Goal sentence incomplete (“consistent and…”) | Cornerstone for every trade-off | DK finishes the phrase; Main stores exact wording in profile |
+| U2 | Night cumulative cap is a **range** ($1500–2000) | First/Main need a hard number at boundary | Pick **$1750** default, or **$1500** conservative / **$2000** aggressive |
+| U3 | Live Book uses **buckets** (`CROWD-DIP/MOM/WATCH`); proposed uses **`strategy_id`** | Dual vocabulary confuses briefs & logs | Either (A) adopt router and log `strategy_id`, or (B) map buckets ↔ strategy_id in a one-page cheat sheet until adoption |
+| U4 | Multi-strategy orchestrator **not live** | Main can’t enforce per-coin router yet | Green-light PR #2 section into Book prompt, or keep hybrid and rename “tags” clearly as non-authoritative |
+| U5 | No explicit **max drawdown / daily loss / open risk %** | “Consistent profit” has no stop on process failure | Add: e.g. pause new risk if day MTM &lt; −X% or open buy notional &gt; Y% of equity |
+| U6 | No **profit target / review cadence** | Team can’t score if we’re winning | Weekly self-reflect: hit-rate, avg R, night fill quality; Second owns dig, Main owns “keep / cut strategy” call for DK |
+| U7 | Day 1h timeout: what counts as “ping”? | Ambiguity on clock start | Define: ping = Main’s confirmation message with concrete orders; clock starts at that send; one reminder at ~45m optional |
+| U8 | Main’s day decision after 1h — **size** of discretion | Risk of silent over-trade | Cap Main’s silent day approve to same night-like bounds (e.g. ≤$1000 new buys, ≤3 symbols) unless DK set higher |
+| U9 | `CATALYST` night rule | Easy to leak risk | Keep: never night-auto without prior DK approval of the event levels |
+| U10 | Tier membership for “other thin names” | Flush Tier-C gate is fuzzy | Maintain an explicit Tier-C list in policy (start: PUMP VVV MORPHO SYRUP; add/remove only by DK) |
+| U11 | Tactical prompt still says “Main” / `briefs.jsonl` from Main | Naming drift after Book rename | Patch Tactical to read Book / `routine="Book"` (First should already be aligning) |
+| U12 | 8h / hourly brief desires in older memory vs live **4h Book** | Conflicting schedules in shared memory | Confirm Book 00/04/08/12/16/20 Madrid is the only scenario brief; archive older 8h/hourly asks |
+| U13 | “Consistent profit” vs night standing approval | Overnight can place without DK eyes | Keep Flush + caps; add optional: if Flush:ON, Main must be woken / night stands down to BTC/ETH-only (already mostly true) |
+| U14 | Funding as signal — thresholds not numeric | Agents improvise | Publish small table: elevated funding + extreme LSR → widen/cut size (already qualitative); add numeric LSR skip bands per mild names |
+
+---
+
+## 10. Decision hierarchy (conflict resolution)
+
+1. **DK explicit override** (chat) wins.  
+2. Else **written hard constraints** in this doc / live Book prompt.  
+3. Else **Main** judgment within policy (incl. 1h day-confirm timeout).  
+4. Else First executes Book/Tactical literally.  
+5. Second never authorizes live risk — research only.
+
+If something is outside policy → **escalate to DK** (do not invent risk).
+
+---
+
+## 11. Adoption checklist (when you want the router live)
+
+- [ ] Finish cornerstone sentence (U1)  
+- [ ] Pick hard night cumulative $ (U2)  
+- [ ] Optional: Main silent-day size cap (U8)  
+- [ ] Optional: max DD / daily loss pause (U5)  
+- [ ] Merge `Main-PROMPT.router-section.proposed.md` into Book prompt  
+- [ ] Switch top-6 + JSONL to `strategy_id`  
+- [ ] Patch Tactical references Main → Book  
+- [ ] Push scrubbed Markdown to `github.com/dkontsavoi/grok-first` under `routines/`  
+- [ ] Tell First + Second the adoption is live
+
+---
+
+## 12. One-screen cheat sheet
+
+```
+LONG-ONLY · 26-coin list · RevX spot
+Book q4h → First executes · Main = policy · Second = digs
+Day: suggest → Main pings DK → 1h silence → Main decides in-policy
+Night 22–08: auto limits ≤$1k/run · ≤$1.5–2k night · ≤3 new symbols
+Flush:ON → no Tier-C auto · prefer BTC/ETH
+Every buy needs TP/SL/time-stop
+Funding = signal only · never short · never freestyle risk
+```
+
+---
+
+*End of draft. Reply with edits (especially U1–U8) and I’ll revise this file and propagate to First/Second.*
