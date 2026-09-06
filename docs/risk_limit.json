@@ -1,0 +1,39 @@
+{
+  "as_of_madrid": "2026-09-06T13:21:00+02:00",
+  "equity_usd": 7809,
+  "equity_hwm_usd": 7808.64,
+  "regime": "reduce",
+  "reliability_mult": 0.8,
+  "calendar": "madrid_00_24",
+  "transaction_day_limit_usd": {
+    "reduce": 600,
+    "normal": 1000,
+    "flush": 400
+  },
+  "max_day_drop_usd": 280,
+  "max_day_drop_warn_usd": 200,
+  "max_hwm_dd_usd": 500,
+  "dd_warn_usd": 350,
+  "per_run_limit_usd": {
+    "reduce": 400,
+    "normal": 1000,
+    "flush": 300
+  },
+  "max_new_symbols_run": 3,
+  "tier_c_day_cap_usd": {
+    "reduce": 200,
+    "normal": 400,
+    "flush": 0
+  },
+  "risk_per_name_pct": 0.75,
+  "portfolio_heat_max_pct": 6.0,
+  "raise_gate": {
+    "min_selfy_weeks": 4,
+    "min_overall_correct": 0.55,
+    "min_briefs_coverage": 0.8,
+    "max_rule_breaks_per_week": 1,
+    "no_dd_pause": true,
+    "steps": "reliability 0.8\u21920.9\u21921.0 then deploy_pct +2.5pp (cap 20%); hwm_dd +0.5pp (cap 8%); one step/week; Main proposes DK locks"
+  },
+  "notes": "Locked DK 2026-09-06. Replaces night cumulative $1500. Exits do not count toward transaction_day_limit. SOD max_day_drop is new circuit alongside HWM DD."
+}
