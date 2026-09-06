@@ -2,7 +2,7 @@
 
 **As-of:** 2026-09-06 (Europe/Madrid)  
 **Author:** Main (policy coordinator)  
-**Status:** Working draft for DK review — not a substitute for live Book/Tactical prompts until you adopt changes  
+**Status:** Policy locks U1–U14 closed 2026-09-06 — live via Book/Tactical + this doc  
 **Sources:** live Book / Main / Tactical prompts on box, proposed router pack (`grok-first` PR #2 / `/workspace/grok-first-proposed`), agent memories, chat locks with DK / First / Second
 
 ---
@@ -110,6 +110,32 @@
 
 
 ---
+
+
+### 3.9 Night stand-down (U13 locked 2026-09-06)
+
+Night **new buys** stand down (place **$0** new) when any of:
+- (a) `DD_PAUSE`
+- (b) equity DD from HWM ≥ **$350**
+- (c) Flush:ON **and** DD ≥ **$250**
+- (d) Flush:ON → Tier-C **$0** always (already)
+
+Otherwise normal caps: ≤$1000/run, ≤$1500 cum, ≤3 new symbols. Exits/cancels always allowed.
+
+### 3.10 LSR / funding bands v1 (U14 locked 2026-09-06)
+
+- **Mild / Tier-C** (PUMP VVV MORPHO SYRUP SOL): SKIP `BUY_DIP` if top-trader pos LSR > **4.0**
+- **Crowding set** (BTC ETH AAVE SKY LINK ARB AERO): if LSR top-quintile **and** funding elevated vs 7d median → size ×**0.5** and widen zone; if δ↑ near local highs → SKIP
+- **Don't-fade** (UNI ZRO VVV ICP): never SKIP solely for high LSR
+- Revisit after 30 logged skips
+
+### 3.11 Naming & cadence (U11 / U12 locked 2026-09-06)
+
+- **Book** = cron/brief name in prompts, JSONL (`routine="Book"`), notifications
+- **Main** = coordinator agent only
+- Only scenario/order cadence: Book **00/04/08/12/16/20** Europe/Madrid; archive older 8h/hourly desires
+- Tactical = on-demand only
+
 
 ## 4. Operating cycle (intended)
 
@@ -224,10 +250,10 @@ Prefer night ladders ~**$100–$150** per rung, still under caps.
 | U8 | ~~Silent day size~~ | **LOCKED 2026-09-06** | Silent day approve ≤$1000 new buys, ≤3 symbols |
 | U9 | ~~CATALYST night~~ | **LOCKED 2026-09-06** | Never night-auto CATALYST without same-day DK pre-approval of event + levels + max $ |
 | U10 | ~~Tier-C list~~ | **LOCKED 2026-09-06** | Tier-C = PUMP, VVV, MORPHO, SYRUP (DK-editable); A=BTC/ETH; B=rest |
-| U11 | Tactical prompt still says “Main” / `briefs.jsonl` from Main | Naming drift after Book rename | Patch Tactical to read Book / `routine="Book"` (First should already be aligning) |
-| U12 | 8h / hourly brief desires in older memory vs live **4h Book** | Conflicting schedules in shared memory | Confirm Book 00/04/08/12/16/20 Madrid is the only scenario brief; archive older 8h/hourly asks |
-| U13 | “Consistent profit” vs night standing approval | Overnight can place without DK eyes | Keep Flush + caps; add optional: if Flush:ON, Main must be woken / night stands down to BTC/ETH-only (already mostly true) |
-| U14 | Funding as signal — thresholds not numeric | Agents improvise | Publish small table: elevated funding + extreme LSR → widen/cut size (already qualitative); add numeric LSR skip bands per mild names |
+| U11 | ~~Naming Book vs Main~~ | **LOCKED 2026-09-06** | Book = cron/brief name everywhere (prompts, JSONL, notifications); Main = coordinator agent only |
+| U12 | ~~Brief cadence~~ | **LOCKED 2026-09-06** | Only Book 00/04/08/12/16/20 Madrid for scenarios/orders; archive 8h/hourly; Tactical = on-demand only |
+| U13 | ~~Night stand-down~~ | **LOCKED 2026-09-06** | Night new buys $0 when: DD_PAUSE; DD from HWM ≥$350; Flush:ON AND DD ≥$250; Flush:ON → Tier-C $0 always. Else normal caps. Exits/cancels always OK |
+| U14 | ~~LSR/funding bands~~ | **LOCKED 2026-09-06** | Mild/Tier-C SKIP BUY_DIP if pos LSR >4.0; crowding + elevated funding vs 7d median → size ×0.5 + widen; δ↑ near highs → SKIP; don’t-fade never SKIP for high LSR alone |
 
 ---
 
@@ -251,9 +277,9 @@ If something is outside policy → **escalate to DK** (do not invent risk).
 - [x] Max DD pause (U5) → **$500** from HWM; pause new risk until DK resumes (locked 2026-09-06)  
 - [x] Merge router into Book prompt (DK full adopt 2026-09-06)  
 - [x] Switch top-6 + JSONL to `strategy_id`  
-- [ ] Patch Tactical references Main → Book  
+- [x] Patch Tactical references Main → Book (U11)  
 - [ ] Push scrubbed Markdown to `github.com/dkontsavoi/grok-first` under `routines/`  
-- [ ] Tell First + Second the adoption is live
+- [x] Tell First + Second the adoption is live
 
 ---
 
@@ -264,7 +290,8 @@ LONG-ONLY · 26-coin list · RevX spot
 Book q4h → First executes · Main = policy · Second = digs
 Day: concrete ping → 1h → silent ≤$1k/≤3 · CATALYST no night-auto · Tier-C=PUMP/VVV/MORPHO/SYRUP
 Night 22–08: auto limits ≤$1k/run · ≤$1500 night · ≤3 new symbols
-Flush:ON → no Tier-C auto · prefer BTC/ETH
+Flush:ON → Tier-C $0 · night stand-down if DD≥$350 or Flush+DD≥$250
+LSR>4.0 mild SKIP · Book-only 4h cadence
 Every buy needs TP/SL/time-stop
 Max DD $500 from HWM → pause new risk until DK resumes
 Funding = signal only · never short · never freestyle risk
