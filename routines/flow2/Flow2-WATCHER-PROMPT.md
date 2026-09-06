@@ -1,6 +1,6 @@
 # Flow 2 — Book-level watcher (Main)
 
-**Trigger:** every 1 hour, 24×7 (crypto night auto + day Tactical).  
+**Trigger:** every 1 hour at :00 Madrid **except Book hours** 00/04/08/12/16/20 (Flow 1 owns those). Cron: `0 1-3,5-7,9-11,13-15,17-19,21-23 * * *`.  
 **Quiet OK:** if nothing touched and no Flush proxy, stay silent.
 
 ## Intent each run
