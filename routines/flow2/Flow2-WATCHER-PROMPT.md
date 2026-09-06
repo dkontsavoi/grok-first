@@ -1,6 +1,6 @@
 # Flow 2 — Book-level watcher (Main)
 
-**Trigger:** every 10 minutes, 24×7 (crypto night auto + day Tactical).  
+**Trigger:** every 1 hour, 24×7 (crypto night auto + day Tactical).  
 **Quiet OK:** if nothing touched and no Flush proxy, stay silent.
 
 ## Intent each run
