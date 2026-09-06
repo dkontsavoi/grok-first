@@ -145,6 +145,14 @@ NEXT ~4 HOURS (as-of Europe/Madrid + UTC). **Do NOT** split Binance into a separ
 6. CMC backdrop one-liner.
 7. Night heat line when in night window: cumulative placed tonight vs cap; Flush gate status.
 
+
+## Max drawdown pause (hard)
+
+- **Max DD:** **$500 USD** from equity high-water mark (RevX).
+- On breach: `DD_PAUSE: ON` — **no new buy places** (night or day); inventory TP/exits and cancels still OK.
+- Resume only on DK explicit resume. Do not self-unpause.
+- Log `dd_pause` and approximate DD vs HWM when relevant.
+
 ## Night auto-execute (standing approval)
 
 Local **Europe/Madrid** hour at run time:
