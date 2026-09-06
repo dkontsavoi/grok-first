@@ -186,6 +186,13 @@ NEXT ~4 HOURS (as-of Europe/Madrid + UTC). **Do NOT** split Binance into a separ
 
 ## Policy locks (2026-09-06 additions)
 
+- **U11 Naming:** notifications/JSONL/prompts say **Book**; agent **Main** = coordinator only. `routine="Book"`.
+- **U12 Cadence:** only Book 00/04/08/12/16/20 Europe/Madrid; Tactical on-demand only.
+- **U13 Night stand-down ($0 new buys)** when any: DD_PAUSE; DD from HWM ≥$350; Flush:ON and DD ≥$250. Flush:ON → Tier-C $0 always. Exits/cancels OK.
+- **U14 LSR/funding v1:** Mild/Tier-C (PUMP VVV MORPHO SYRUP SOL) SKIP BUY_DIP if pos LSR >4.0. Crowding set + elevated funding vs 7d median → size ×0.5 + widen; δ↑ near highs → SKIP. Don’t-fade (UNI ZRO VVV ICP): never SKIP for high LSR alone.
+
+
+
 - **Tier-C (explicit):** PUMP, VVV, MORPHO, SYRUP — Flush:ON → $0 new; DK-editable.
 - **Tier-A:** BTC, ETH. **Tier-B:** rest of restricted list.
 - **CATALYST:** never night-auto unless DK same-day pre-approved event + levels + max $.
