@@ -91,6 +91,21 @@ Price alert (restricted-list coin)
 
 **Unchanged:** Flow 1, Flow 2 cadence (hourly, skip Book hours), user-facing notifies when there is a real result.
 
+
+## 2e. Flow 3 — Selfy improvement loop (LOCKED 2026-09-06)
+
+```
+Selfy (First, 07:00 Madrid) grades ~48h Book → scorecard + Concerns
+  → First / Second / Main refine concerns (payload only, no ack ping-pong)
+  → Second digs mitigations
+  → Main decides in-policy OR asks DK
+  → First executes only approved changes; reports
+```
+
+**Artifacts:** `/workspace/crypto-self-reflect/scores.jsonl` (`routine="Selfy"`); `/workspace/crypto-self-reflect/flow3.jsonl`  
+**Doc:** `/workspace/flow3/README.md`  
+**Main’s job:** after Second’s mitigations dig, decide within policy or escalate to DK — never freestyle risk; First does not self-approve prompt/policy changes.
+
 ## 3. Hard constraints (live until DK changes)
 
 ### 3.1 Universe & direction
