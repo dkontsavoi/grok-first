@@ -2,7 +2,7 @@
 
 **As-of:** 2026-09-06 (Europe/Madrid)  
 **Author:** Main (policy coordinator)  
-**Status:** Policy locks U1–U14 closed 2026-09-06 — live via Book/Tactical + this doc  
+**Status:** Policy locks U1–U14 closed 2026-09-06 · **Flow 1** decision cycle locked — live via Book/Tactical + this doc  
 **Sources:** live Book / Main / Tactical prompts on box, proposed router pack (`grok-first` PR #2 / `/workspace/grok-first-proposed`), agent memories, chat locks with DK / First / Second
 
 ---
@@ -39,6 +39,27 @@
 - **Tactical** = on-demand book hygiene / NOW tactics (suggest-only for places until confirm).
 
 ---
+
+
+## 2b. Flow 1 — Book decision cycle (LOCKED 2026-09-06)
+
+Standing operating sequence for each Book (and Tactical when it surfaces actionable coins):
+
+```
+1. First runs Book → produces coins / actions to decide
+2. That triggers Second → deeper dig on those coins → results to Main
+3. Main decides within policy, or escalates / delegates to DK
+4. Main or DK may ask Second for **at most one** additional dig (no loops)
+5. Final decision → First executes
+6. Next trigger = next Book run (or next Tactical ask)
+```
+
+### Rules
+- **Second never self-starts a loop** off their own dig; only Main assigns digs (proactive OK between cycles, but inside Flow 1 the chain is First→Second→Main).
+- **One additional dig max** per coin/decision set after the initial post-Book dig.
+- **Night:** Flow 1 still applies for non-standing actions; standing night auto (within caps) may place from Book without waiting on Second **only** for night-safe rows already compiled — material concentration / Tier-C / unclear routing should still kick Second before size-up. Cancels of stale/wrong-regime bids can proceed under Main without a full dig when policy is already clear (e.g. >12h stale).
+- **Day:** First suggests → Flow 1 dig → Main ping DK (U7) → silent ≤$1000/≤3 (U8) or DK reply → First executes.
+- Main remains policy gate; DK remains principal; Second research-only.
 
 ## 3. Hard constraints (live until DK changes)
 
@@ -287,7 +308,8 @@ If something is outside policy → **escalate to DK** (do not invent risk).
 
 ```
 LONG-ONLY · 26-coin list · RevX spot
-Book q4h → First executes · Main = policy · Second = digs
+Flow 1: Book → Second dig → Main/DK (≤1 re-dig) → First executes
+Book q4h · Main = policy · Second = digs
 Day: concrete ping → 1h → silent ≤$1k/≤3 · CATALYST no night-auto · Tier-C=PUMP/VVV/MORPHO/SYRUP
 Night 22–08: auto limits ≤$1k/run · ≤$1500 night · ≤3 new symbols
 Flush:ON → Tier-C $0 · night stand-down if DD≥$350 or Flush+DD≥$250
