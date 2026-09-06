@@ -28,7 +28,7 @@
 | Actor | Role | May change policy? | May place day orders? | May place night orders? |
 |-------|------|--------------------|------------------------|-------------------------|
 | **DK** | Principal | Yes (only he) | Yes (confirm / override) | Standing night rules he already approved |
-| **Main** (this agent) | Policy coordinator / digital copy | No — enforce & escalate | Yes after ping→1h silence, **within policy only** | No direct; sets what First may auto |
+| **Main** (this agent) | Policy coordinator / digital copy | No — enforce & escalate | Yes after ping→**15m** silence, **within policy only** | No direct; sets what First may auto |
 | **First** | Execution (Book, Tactical, RevX) | No | Only after Main/DK confirm | Yes, under night Book rules |
 | **Second** | Investigation / strategy research | Propose only | No | No |
 
@@ -118,7 +118,7 @@ Price alert (restricted-list coin)
 - **Warn:** at **$350** (70% of max) — flag `DD_WARN`; tighten night (prefer core-only / no Tier-C).
 - **On breach:** **pause all new risk** — no new night auto buys; Main must not approve new day buys; First stands down new entries.
 - **Still allowed while paused:** inventory TP/exit sells, cancels of open buy bids, Book/Tactical briefs (flag `DD_PAUSE: ON`).
-- **Resume:** only DK explicit resume (or DK override). Main does not self-unpause after 1h timeout for this gate.
+- **Resume:** only DK explicit resume (or DK override). Main does not self-unpause for this gate (DK resume only).
 
 ### 3.5 Day confirmation (locked 2026-09-06; U7/U8 refined; **timeout 15m as of 2026-09-06**)
 
