@@ -117,30 +117,23 @@ Investigate
 
 ## 5. What is LIVE today vs PROPOSED
 
-### 5.1 Live (Book / Tactical on box)
+### 5.1 Live (Book / Tactical) — full `strategy_id` router adopted 2026-09-06
 
-- Buy-dip hybrid with buckets: `CROWD-DIP` | `MOM` | `WATCH`
-- Flush detector + Flush alt gates
-- ATR-tier dip zones (A/B/C) + invalidation
-- Exit ladder TP1/TP2/runner/time-stop
-- Binance top-trader **POSITION** dynamics in tactics
-- Don't-fade set: `UNI ZRO VVV ICP`
-- Crowding caution: ETH/SKY/BTC/AAVE (+ LINK/ARB 4h, AERO extremes)
-- δ-momentum lean: JUP/HYPE/NEAR/LDO/RAY/SUI
-- Complementary tags exist as **tags only** (`FLUSH-MR`, `MOM`, `RS-DIP`, `CORE-DCA`) — dip remains core
-- Logging to `/workspace/crypto-self-reflect/briefs.jsonl` as `routine="Book"`
+- **Regime gate → per-coin `strategy_id` (or SKIP) → compiler** (mixed strategies in one Book run)
+- Strategy IDs: `BUY_DIP` | `FLUSH_MR` | `MOM` | `RS_DIP` | `CORE_DCA` | `CATALYST`
+- Top-6: `TICKER | strategy_id | thesis | zone | inv | size | exit`
+- Night-safe filter by `strategy_id`; Flush + ATR tiers + exit ladder unchanged
+- Binance POSITION dynamics; don't-fade `UNI ZRO VVV ICP`
+- Legacy buckets (`CROWD-DIP`/`MOM`/`WATCH`) = optional aliases only; **authoritative = `strategy_id`**
+- Logging: `strategy_id`, `allowed_strategies`, `size_bias` in `briefs.jsonl` (`routine="Book"`)
+- Caps: night ≤$1000/run, cumulative ≤**$1500**, max DD **$500** HWM pause
 
-### 5.2 Proposed (not adopted until DK green-lights)
+### 5.2 Strategy modules (reference)
 
-Repo path: `github.com/dkontsavoi/grok-first` PR #2 → `routines/proposed/strategies/`  
+Repo: `github.com/dkontsavoi/grok-first` → `routines/proposed/strategies/` (and `routines/Main-PROMPT.md` / `Book-PROMPT.md` live text).  
 Local mirror: `/workspace/grok-first-proposed/strategies/`
 
-- Full **regime gate → per-coin `strategy_id` router → compiler**
-- Strategy modules: BuyTheDip, FlushMR, Momentum, RSDip, CoreDCA, Catalyst
-- Top-6 rows as: `TICKER | strategy_id | thesis | zone | inv | size | exit`
-- Night-safe filter by `strategy_id`
-
-**Main’s job until adoption:** enforce live Book rules + chat locks; help DK/First align when you green-light the router.
+**Main’s job:** enforce router + caps; First executes Book; Second digs when routing unclear.
 
 ---
 
@@ -208,8 +201,8 @@ Prefer night ladders ~**$100–$150** per rung, still under caps.
 |---|---------|----------------|---------------|
 | U1 | Goal sentence incomplete (“consistent and…”) | Cornerstone for every trade-off | DK finishes the phrase; Main stores exact wording in profile |
 | U2 | ~~Night cumulative range~~ | **LOCKED 2026-09-06** | Hard cap **$1500** USD new buys per night window |
-| U3 | Live Book uses **buckets** (`CROWD-DIP/MOM/WATCH`); proposed uses **`strategy_id`** | Dual vocabulary confuses briefs & logs | Either (A) adopt router and log `strategy_id`, or (B) map buckets ↔ strategy_id in a one-page cheat sheet until adoption |
-| U4 | Multi-strategy orchestrator **not live** | Main can’t enforce per-coin router yet | Green-light PR #2 section into Book prompt, or keep hybrid and rename “tags” clearly as non-authoritative |
+| U3 | ~~Buckets vs strategy_id~~ | **LOCKED 2026-09-06** | Full per-coin `strategy_id` orchestrator adopted into Book (DK over Second staged B1). Authoritative tag = `strategy_id`; legacy buckets optional aliases only |
+| U4 | ~~Orchestrator not live~~ | **LOCKED 2026-09-06** | Full router live in Book — regime gate + per-coin `strategy_id` + compiler |
 | U5 | ~~No max DD~~ | **LOCKED 2026-09-06** | Max drawdown **$500 USD** from equity high-water mark → **pause all new risk** (no new night buys, no Main day approve of new buys) until DK resumes; inventory TP/exits and cancels still allowed |
 | U6 | No **profit target / review cadence** | Team can’t score if we’re winning | Weekly self-reflect: hit-rate, avg R, night fill quality; Second owns dig, Main owns “keep / cut strategy” call for DK |
 | U7 | Day 1h timeout: what counts as “ping”? | Ambiguity on clock start | Define: ping = Main’s confirmation message with concrete orders; clock starts at that send; one reminder at ~45m optional |
@@ -241,8 +234,8 @@ If something is outside policy → **escalate to DK** (do not invent risk).
 - [x] Pick hard night cumulative $ (U2) → **$1500** locked 2026-09-06  
 - [ ] Optional: Main silent-day size cap (U8)  
 - [x] Max DD pause (U5) → **$500** from HWM; pause new risk until DK resumes (locked 2026-09-06)  
-- [ ] Merge `Main-PROMPT.router-section.proposed.md` into Book prompt  
-- [ ] Switch top-6 + JSONL to `strategy_id`  
+- [x] Merge router into Book prompt (DK full adopt 2026-09-06)  
+- [x] Switch top-6 + JSONL to `strategy_id`  
 - [ ] Patch Tactical references Main → Book  
 - [ ] Push scrubbed Markdown to `github.com/dkontsavoi/grok-first` under `routines/`  
 - [ ] Tell First + Second the adoption is live
