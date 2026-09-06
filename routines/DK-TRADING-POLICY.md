@@ -78,7 +78,15 @@
 | Flush:ON | **$0 Tier-C** auto; prefer BTC/ETH (or ≤$300 total if bounce confirmed) |
 | MOM at night | No chase; only pre-approved continuation levels |
 
-### 3.4 Day confirmation (locked 2026-09-06)
+### 3.4 Max drawdown (locked 2026-09-06)
+
+- **Max DD:** **$500 USD** peak-to-trough from equity **high-water mark** (RevX account equity).
+- **On breach:** **pause all new risk** — no new night auto buys; Main must not approve new day buys; First stands down new entries.
+- **Still allowed while paused:** inventory TP/exit sells, cancels of open buy bids, Book/Tactical briefs (flag `DD_PAUSE: ON`).
+- **Resume:** only DK explicit resume (or DK override). Main does not self-unpause after 1h timeout for this gate.
+
+### 3.5 Day confirmation (locked 2026-09-06)
+
 
 1. First proposes; **Main** owns the confirm ask.  
 2. Main **pings DK** before deciding.  
@@ -202,7 +210,7 @@ Prefer night ladders ~**$100–$150** per rung, still under caps.
 | U2 | ~~Night cumulative range~~ | **LOCKED 2026-09-06** | Hard cap **$1500** USD new buys per night window |
 | U3 | Live Book uses **buckets** (`CROWD-DIP/MOM/WATCH`); proposed uses **`strategy_id`** | Dual vocabulary confuses briefs & logs | Either (A) adopt router and log `strategy_id`, or (B) map buckets ↔ strategy_id in a one-page cheat sheet until adoption |
 | U4 | Multi-strategy orchestrator **not live** | Main can’t enforce per-coin router yet | Green-light PR #2 section into Book prompt, or keep hybrid and rename “tags” clearly as non-authoritative |
-| U5 | No explicit **max drawdown / daily loss / open risk %** | “Consistent profit” has no stop on process failure | Add: e.g. pause new risk if day MTM &lt; −X% or open buy notional &gt; Y% of equity |
+| U5 | ~~No max DD~~ | **LOCKED 2026-09-06** | Max drawdown **$500 USD** from equity high-water mark → **pause all new risk** (no new night buys, no Main day approve of new buys) until DK resumes; inventory TP/exits and cancels still allowed |
 | U6 | No **profit target / review cadence** | Team can’t score if we’re winning | Weekly self-reflect: hit-rate, avg R, night fill quality; Second owns dig, Main owns “keep / cut strategy” call for DK |
 | U7 | Day 1h timeout: what counts as “ping”? | Ambiguity on clock start | Define: ping = Main’s confirmation message with concrete orders; clock starts at that send; one reminder at ~45m optional |
 | U8 | Main’s day decision after 1h — **size** of discretion | Risk of silent over-trade | Cap Main’s silent day approve to same night-like bounds (e.g. ≤$1000 new buys, ≤3 symbols) unless DK set higher |
@@ -232,7 +240,7 @@ If something is outside policy → **escalate to DK** (do not invent risk).
 - [ ] Finish cornerstone sentence (U1)  
 - [x] Pick hard night cumulative $ (U2) → **$1500** locked 2026-09-06  
 - [ ] Optional: Main silent-day size cap (U8)  
-- [ ] Optional: max DD / daily loss pause (U5)  
+- [x] Max DD pause (U5) → **$500** from HWM; pause new risk until DK resumes (locked 2026-09-06)  
 - [ ] Merge `Main-PROMPT.router-section.proposed.md` into Book prompt  
 - [ ] Switch top-6 + JSONL to `strategy_id`  
 - [ ] Patch Tactical references Main → Book  
@@ -250,6 +258,7 @@ Day: suggest → Main pings DK → 1h silence → Main decides in-policy
 Night 22–08: auto limits ≤$1k/run · ≤$1500 night · ≤3 new symbols
 Flush:ON → no Tier-C auto · prefer BTC/ETH
 Every buy needs TP/SL/time-stop
+Max DD $500 from HWM → pause new risk until DK resumes
 Funding = signal only · never short · never freestyle risk
 ```
 
