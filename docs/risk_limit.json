@@ -1,5 +1,5 @@
 {
-  "as_of_madrid": "2026-09-06T13:21:00+02:00",
+  "as_of_madrid": "2026-09-06T13:44:11+02:00",
   "equity_usd": 7809,
   "equity_hwm_usd": 7808.64,
   "regime": "reduce",
@@ -28,12 +28,28 @@
   "risk_per_name_pct": 0.75,
   "portfolio_heat_max_pct": 6.0,
   "raise_gate": {
-    "min_selfy_weeks": 4,
+    "min_selfy_weeks": 2,
     "min_overall_correct": 0.55,
     "min_briefs_coverage": 0.8,
     "max_rule_breaks_per_week": 1,
     "no_dd_pause": true,
-    "steps": "reliability 0.8\u21920.9\u21921.0 then deploy_pct +2.5pp (cap 20%); hwm_dd +0.5pp (cap 8%); one step/week; Main proposes DK locks"
+    "skip_step_if": [
+      "DD_WARN",
+      "rule_break",
+      "Flush_week"
+    ],
+    "step_usd": {
+      "transaction_day_limit": 250,
+      "per_run_limit": 200,
+      "tier_c_day_cap": 50
+    },
+    "max_steps_per_week": 1,
+    "soft_ceiling_pct_equity": {
+      "transaction_day_limit": 0.2,
+      "until_reliability": 1.0
+    },
+    "rationale": "Aggressive raise justified: long-only spot, no leverage, no shorts, strategy router + regime gates. Starters stay tight; climb faster once Selfy clean.",
+    "steps": "After \u22652 clean Selfy weeks: +$250 day deploy / +$200 per_run / +$50 Tier-C day, once/week; skip if DD_WARN or rule break or Flush week; soft cap day deploy \u226420% equity until reliability_mult=1.0; Main proposes each step, DK locks"
   },
-  "notes": "Locked DK 2026-09-06. Replaces night cumulative $1500. Exits do not count toward transaction_day_limit. SOD max_day_drop is new circuit alongside HWM DD."
+  "notes": "Locked DK 2026-09-06. Replaces night cumulative $1500. Exits do not count toward transaction_day_limit. SOD max_day_drop alongside HWM DD. Raise gate aggressive (2 Selfy weeks, +$250 day/week) \u2014 starters unchanged."
 }
