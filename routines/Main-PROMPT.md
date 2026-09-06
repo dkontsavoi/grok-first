@@ -207,6 +207,7 @@ Read `/workspace/crypto-self-reflect/risk_limit.json` each run.
 Under **reduce** (current): transaction_day_limit **$600**; per_run **$400**; Tier-C day **$200**; max_day_drop **$280** (warn $200); max_hwm_dd **$500** (warn $350); ≤3 new symbols/run.
 **Normal** regime: day **$1000**; per_run **$1000**; Tier-C day **$400**.
 Exits don’t count toward transaction_day_limit. Former night cumulative $1500 retired.
+Raise: ≥2 clean Selfy weeks → +$250 day / +$200 per_run / week (skip DD_WARN/Flush); Main proposes, DK locks; soft cap ≤20% equity.
 ## Max drawdown pause (hard)
 
 - **Max DD:** **$500 USD** from equity high-water mark (RevX).
