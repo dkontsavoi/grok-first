@@ -24,3 +24,8 @@ Respect all policy locks (night symbol/notional caps, DD_WARN/PAUSE, Tier-C, SKI
 
 ## Backup
 Top active levels may also run under `revx monitor price` (First/ops); treat those Telegram/events as secondary signals into the same Tactical→Flow 1 path when seen.
+
+
+## Night vs day-wait (Second delta)
+If a fired level has `night_safe: false` and local Madrid hour is in **22:00–08:00**: still run Tactical + Flow 1 dig, but Main must **day-wait** any new buys — do not instruct First to place night buys for that alert. Exits/cancels still OK if policy allows.
+Preserve `last_fired`/`cooldowns` across First level rewrites.
