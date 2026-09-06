@@ -63,12 +63,14 @@
 
 ### 3.3 Night auto (standing approval) — Europe/Madrid
 
+> **Lock (2026-09-06):** night cumulative new-buy notional hard cap = **$1500** (not a range).
+
 | Rule | Value |
 |------|--------|
 | Night window | 22:00–08:00 (22 inclusive → 08 exclusive) |
 | Day window | 08:00–21:59 → **suggest only** until confirm |
 | Per-run new buy notional | ≤ **$1000** |
-| Night cumulative new buys | ≤ **$1500–2000** (range, see unclear) |
+| Night cumulative new buys | ≤ **$1500** (hard) |
 | Max new symbols / night | ≤ **3** |
 | Order types | Limit buys only; never market buys |
 | Sells at night | **Inventory only** (TP1/TP2); sell $ does not count vs buy cap |
@@ -197,7 +199,7 @@ Prefer night ladders ~**$100–$150** per rung, still under caps.
 | # | Unclear | Why it matters | Suggested fix |
 |---|---------|----------------|---------------|
 | U1 | Goal sentence incomplete (“consistent and…”) | Cornerstone for every trade-off | DK finishes the phrase; Main stores exact wording in profile |
-| U2 | Night cumulative cap is a **range** ($1500–2000) | First/Main need a hard number at boundary | Pick **$1750** default, or **$1500** conservative / **$2000** aggressive |
+| U2 | ~~Night cumulative range~~ | **LOCKED 2026-09-06** | Hard cap **$1500** USD new buys per night window |
 | U3 | Live Book uses **buckets** (`CROWD-DIP/MOM/WATCH`); proposed uses **`strategy_id`** | Dual vocabulary confuses briefs & logs | Either (A) adopt router and log `strategy_id`, or (B) map buckets ↔ strategy_id in a one-page cheat sheet until adoption |
 | U4 | Multi-strategy orchestrator **not live** | Main can’t enforce per-coin router yet | Green-light PR #2 section into Book prompt, or keep hybrid and rename “tags” clearly as non-authoritative |
 | U5 | No explicit **max drawdown / daily loss / open risk %** | “Consistent profit” has no stop on process failure | Add: e.g. pause new risk if day MTM &lt; −X% or open buy notional &gt; Y% of equity |
@@ -228,7 +230,7 @@ If something is outside policy → **escalate to DK** (do not invent risk).
 ## 11. Adoption checklist (when you want the router live)
 
 - [ ] Finish cornerstone sentence (U1)  
-- [ ] Pick hard night cumulative $ (U2)  
+- [x] Pick hard night cumulative $ (U2) → **$1500** locked 2026-09-06  
 - [ ] Optional: Main silent-day size cap (U8)  
 - [ ] Optional: max DD / daily loss pause (U5)  
 - [ ] Merge `Main-PROMPT.router-section.proposed.md` into Book prompt  
@@ -245,7 +247,7 @@ If something is outside policy → **escalate to DK** (do not invent risk).
 LONG-ONLY · 26-coin list · RevX spot
 Book q4h → First executes · Main = policy · Second = digs
 Day: suggest → Main pings DK → 1h silence → Main decides in-policy
-Night 22–08: auto limits ≤$1k/run · ≤$1.5–2k night · ≤3 new symbols
+Night 22–08: auto limits ≤$1k/run · ≤$1500 night · ≤3 new symbols
 Flush:ON → no Tier-C auto · prefer BTC/ETH
 Every buy needs TP/SL/time-stop
 Funding = signal only · never short · never freestyle risk
