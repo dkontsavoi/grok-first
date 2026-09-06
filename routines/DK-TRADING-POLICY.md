@@ -108,6 +108,27 @@ Selfy (First, 07:00 Madrid) grades ~48h Book → scorecard + Concerns
 
 ## 3. Hard constraints (live until DK changes)
 
+
+### 3.0 RiskLimit object (LOCKED 2026-09-06)
+
+24h risk object (Madrid calendar day). Live: `/workspace/crypto-self-reflect/risk_limit.json`.
+
+| Field | reduce (now) | normal |
+|-------|--------------|--------|
+| `transaction_day_limit_usd` | **$600** | **$1000** |
+| `max_day_drop_usd` (from SOD) | **$280** (warn $200) | $280 |
+| `max_hwm_dd_usd` | **$500** (warn $350) | $500 |
+| `per_run_limit_usd` | **$400** | **$1000** |
+| `tier_c_day_cap_usd` | **$200** | **$400** |
+| `max_new_symbols_run` | **3** | **3** |
+
+- **transaction_day_limit** = max NEW buy notional / day (exits don’t count). Replaces former night cumulative $1500.
+- **max_day_drop** = pause new risk if equity ≤ SOD equity − this (new circuit).
+- **max_hwm_dd** = trailing HWM pause (unchanged role of old DD $500).
+- Flush:ON → Tier-C day cap **$0**; regime may further cut deploy.
+- `reliability_mult` starts **0.8**; raise toward/above old $1500 only after ≥4 clean Selfy weeks (Main proposes, DK locks).
+- Ops autonomy 24×7 still applies **inside** these caps.
+
 ### 3.1 Universe & direction
 
 - **Long-only.** Never short. Never sell-to-open.
@@ -123,14 +144,14 @@ Selfy (First, 07:00 Madrid) grades ~48h Book → scorecard + Concerns
 
 ### 3.3 Night auto (standing approval) — Europe/Madrid
 
-> **Lock (2026-09-06):** night cumulative new-buy notional hard cap = **$1500** (not a range).
+> **Superseded (2026-09-06):** use **RiskLimit.transaction_day_limit** (24h). Under reduce = **$600**; normal = **$1000**. Former night-only $1500 retired.
 
 | Rule | Value |
 |------|--------|
 | Night window | 22:00–08:00 (22 inclusive → 08 exclusive) |
 | Day window | 08:00–21:59 → **ops via Main** (no DK approval) |
-| Per-run new buy notional | ≤ **$1000** |
-| Night cumulative new buys | ≤ **$1500** (hard) |
+| Per-run new buy notional | ≤ **RiskLimit.per_run** ($400 reduce / $1000 normal) |
+| Transaction day limit (24h new buys) | ≤ **RiskLimit** ($600 reduce / $1000 normal) |
 | Max new symbols / night | ≤ **3** |
 | Order types | Limit buys only; never market buys |
 | Sells at night | **Inventory only** (TP1/TP2); sell $ does not count vs buy cap |
@@ -138,10 +159,12 @@ Selfy (First, 07:00 Madrid) grades ~48h Book → scorecard + Concerns
 | Flush:ON | **$0 Tier-C** auto; prefer BTC/ETH (or ≤$300 total if bounce confirmed) |
 | MOM at night | No chase; only pre-approved continuation levels |
 
-### 3.4 Max drawdown (locked 2026-09-06)
+### 3.4 Max drawdown + day drop (locked 2026-09-06; RiskLimit)
 
-- **Max DD:** **$500 USD** peak-to-trough from equity **high-water mark** (RevX account equity).
-- **Warn:** at **$350** (70% of max) — flag `DD_WARN`; tighten night (prefer core-only / no Tier-C).
+- **max_hwm_dd:** **$500** from equity HWM — `DD_PAUSE` on breach.
+- **dd_warn (HWM):** **$350** — `DD_WARN`.
+- **max_day_drop:** **$280** from **SOD** equity — pause new risk if hit (warn **$200**).
+- Inventory exits/cancels still OK while paused; resume HWM pause only on DK explicit resume.
 - **On breach:** **pause all new risk** — no new night auto buys; Main must not approve new day buys; First stands down new entries.
 - **Still allowed while paused:** inventory TP/exit sells, cancels of open buy bids, Book/Tactical briefs (flag `DD_PAUSE: ON`).
 - **Resume:** only DK explicit resume (or DK override). Main does not self-unpause for this gate (DK resume only).
@@ -157,10 +180,10 @@ Selfy (First, 07:00 Madrid) grades ~48h Book → scorecard + Concerns
 - Explicit overrides / CATALYST event pre-approval (U9)
 - Flow 3 items Main flags as consequential
 
-**Ops caps (apply day and night per run):**
-- New buy notional ≤ **$1000** / run
-- ≤ **3** new symbols / run (night cumulative new buys across 22:00–08:00 still ≤ **$1500**)
-- Limit buys only; inventory sells OK; Flush/Tier-C/LSR/DD gates unchanged
+**Ops caps (apply day and night — see §3.0 RiskLimit):**
+- New buy notional ≤ **per_run_limit** / run; day total ≤ **transaction_day_limit**
+- ≤ **3** new symbols / run
+- Limit buys only; inventory sells OK; Flush/Tier-C/LSR/DD + **max_day_drop** gates unchanged
 - First executes only on **Main** decision (Flow 1) — First does not freestyle
 
 **U7/U8:** retired as day-micromanagement. Optional FYI to DK on large packages is fine; not required; never blocks execution.
@@ -317,10 +340,10 @@ Prefer night ladders ~**$100–$150** per rung, still under caps.
 | # | Unclear | Why it matters | Suggested fix |
 |---|---------|----------------|---------------|
 | U1 | ~~Goal sentence~~ | **LOCKED 2026-09-06** | Grow RevX spot equity consistently and sustainably within night ≤$1500 / DD ≤$500; router-only setups; entry↔exit |
-| U2 | ~~Night cumulative range~~ | **LOCKED 2026-09-06** | Hard cap **$1500** USD new buys per night window |
+| U2 | ~~Night cumulative~~ | **SUPERSEDED 2026-09-06** | RiskLimit `transaction_day_limit` 24h: **$600** reduce / **$1000** normal |
 | U3 | ~~Buckets vs strategy_id~~ | **LOCKED 2026-09-06** | Full per-coin `strategy_id` orchestrator adopted into Book (DK over Second staged B1). Authoritative tag = `strategy_id`; legacy buckets optional aliases only |
 | U4 | ~~Orchestrator not live~~ | **LOCKED 2026-09-06** | Full router live in Book — regime gate + per-coin `strategy_id` + compiler |
-| U5 | ~~No max DD~~ | **LOCKED 2026-09-06** | Max drawdown **$500 USD** from equity high-water mark → **pause all new risk** (no new night buys, no Main day approve of new buys) until DK resumes; inventory TP/exits and cancels still allowed |
+| U5 | ~~No max DD~~ | **LOCKED + extended 2026-09-06** | HWM DD **$500** / warn $350 + SOD **max_day_drop $280** / warn $200 → pause new risk; exits/cancels OK; HWM resume = DK only |
 | U6 | ~~Review cadence~~ | **LOCKED 2026-09-06** | Daily process check; weekly by strategy_id (n, hit-rate, avg R); no hard $ profit target; Main keep/reduce/pause |
 | U7 | ~~Day ping / timeout~~ | **RETIRED 2026-09-06** | No DK approval for in-policy ops; Main decides 24×7 within caps |
 | U8 | ~~Silent day size~~ | **SUPERSEDED 2026-09-06** | Ops caps ≤$1000/run ≤3 symbols apply 24×7 under Main (not a DK-silent window) |
@@ -366,12 +389,12 @@ LONG-ONLY · 26-coin list · RevX spot
 Flow 1: Book → Second dig → Main/DK (≤1 re-dig) → First executes
 Flow 2: hourly except Book hours 00/04/08/12/16/20
 Book q4h · Main = policy · Second = digs
-Ops 24×7 via Main ≤$1k/run ≤3 symbols · CATALYST needs DK pre-approval · Tier-C=PUMP/VVV/MORPHO/SYRUP
-Night 22–08: auto limits ≤$1k/run · ≤$1500 night · ≤3 new symbols
+Ops 24×7 via Main · RiskLimit day $600 reduce/$1000 normal · per_run $400/$1000 · HWM DD $500 · day drop $280 · ≤3 symbols · Tier-C day $200/$400
+24h RiskLimit: day deploy + per_run + day drop + HWM DD (see §3.0)
 Flush:ON → Tier-C $0 · night stand-down if DD≥$350 or Flush+DD≥$250
 LSR>4.0 mild SKIP · Book-only 4h cadence
 Every buy needs TP/SL/time-stop
-Max DD $500 from HWM → pause new risk until DK resumes
+HWM DD $500 + SOD day drop $280 → pause new risk (HWM resume = DK)
 Funding = signal only · never short · never freestyle risk
 ```
 
