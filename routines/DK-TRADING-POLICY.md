@@ -61,6 +61,25 @@ Standing operating sequence for each Book (and Tactical when it surfaces actiona
 - **Day:** First suggests → Flow 1 dig → Main ping DK (U7) → silent ≤$1000/≤3 (U8) or DK reply → First executes.
 - Main remains policy gate; DK remains principal; Second research-only.
 
+
+## 2c. Flow 2 — Alert → Tactical → Flow 1 (PROPOSED 2026-09-06)
+
+```
+Price alert (restricted-list coin)
+  → Main runs Tactical
+  → Tactical execution triggers Flow 1
+      (Second dig → Main/DK ≤1 re-dig → First execute)
+  → Next alert or next Book
+```
+
+**Status:** Intent locked by DK; **alert delivery plumbing TBD** — Second investigating (`revx monitor`, CMC, webhooks, cron poll, Telegram). Adopt primary channel after Dig lands.
+
+**Rules (intent):**
+- Alerts only for restricted-list names (and levels from Book/Tactical/inv/TP).
+- Alert wakes **Main** (not First directly) to run Tactical.
+- Every Tactical run enters Flow 1 before new risk (same one-re-dig cap).
+- Does not replace Book q4h; complements it for intraday zone/inv events.
+
 ## 3. Hard constraints (live until DK changes)
 
 ### 3.1 Universe & direction
