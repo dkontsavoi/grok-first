@@ -68,5 +68,4 @@ Under **reduce** (current): transaction_day_limit **$600**; per_run **$400**; Ti
 
 Exits/cancels do **not** count toward transaction_day_limit. Former night cumulative **$1500** retired.
 
-Track Madrid calendar-day new-buy notional + SOD equity (`equity_sod.json`). Raise only after reliability gate (≥4 clean Selfy weeks); Main proposes, DK locks.
-
+Track Madrid calendar-day new-buy notional + SOD equity (`equity_sod.json`). Raise: ≥**2** clean Selfy weeks → +**$250** day / +**$200** per_run / +**$50** Tier-C day, 1 step/week (skip if DD_WARN / rule_break / Flush week); soft ceiling day deploy ≤**20%** equity until `reliability_mult=1.0`; Main proposes each step → DK locks. Starter reduce caps unchanged.
