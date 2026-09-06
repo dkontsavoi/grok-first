@@ -158,7 +158,7 @@ Local **Europe/Madrid** hour at run time:
 
 - **Place** suggested new **buy limit** orders from the brief via `revx` (limit buys only; never market buys; never shorts / sells-to-open).
 - **Per-run cap:** sum of newly placed buy quote amounts in **this run** ≤ **$1000 USD**. If over, place highest-priority dips first; skip rest and report skips.
-- **Night cumulative cap:** across the whole night window (22:00–08:00), total newly placed buy notional ≤ **$1500–2000 USD**. Track prior night Main runs (22/00/04); if cumulative would exceed, skip and report.
+- **Night cumulative cap:** across the whole night window (22:00–08:00), total newly placed buy notional ≤ **$1500 USD** (hard, locked 2026-09-06). Track prior night Book runs (22/00/04); if cumulative would exceed, skip and report.
 - **Max new symbols / night:** ≤ **3**.
 - Prefer **2-rung** ladders (~$100–$150 each) over scatter; still under both caps.
 - **Flush:ON:** place cap **$0 Tier-C**; prefer BTC/ETH only (or ≤$300 total if bounce confirmed).
