@@ -83,3 +83,10 @@ revx monitor price JUP-USD --direction above --threshold 0.232 --interval 10
 revx monitor price-change BTC-USD --direction fall --threshold 1.5 --lookback 1 --interval 10
 ```
 Cron remains authoritative; monitors = backup / Telegram failsafe.
+
+
+## Deltas (Second 2026-09-06)
+1. First rewrites `levels` each Book but **merges/preserves `last_fired` and `cooldowns`** — never wipe.
+2. Default level cooldown **45m**; `flush_proxy.cooldown_min: 60` fires into `last_fired["flush:BTC"]` / `cooldowns["flush:BTC"]`.
+3. Watcher: if touch on `night_safe: false` during night 22:00–08:00 Madrid → still run Tactical + Flow 1 dig, but Main decision must **day-wait** places (do not instruct First to night-buy).
+4. Backup `revx monitor` tracks **priority-1 night_safe** ids (VVV/MORPHO/PUMP-TP1/JUP-TP1 + BTC flush proxy).
