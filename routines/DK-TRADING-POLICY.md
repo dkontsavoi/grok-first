@@ -9,22 +9,16 @@
 
 ## 1. Cornerstone (goal)
 
-**Team goal:** grow Revolut X spot account **profit** in a **consistent** way — not max one-shot upside.
+**Team goal (LOCKED 2026-09-06):**
 
-> **UNCLEAR (your message cut off):**  
-> *“The corner stone of the policy - our goal as a team to get the profit on the account in the consistent and…”*  
-> **Assumed finish:** *“…consistent and sustainable way (drawdown-aware, process over heroics).”*
-
-**Suggested full sentence (pick / edit):**
-
-> Our goal as a team is to grow account profit **consistently and sustainably** — by enforcing written risk rules, pairing every entry with an exit, and only taking setups the regime + per-coin router allow.
+> Grow RevX spot equity **consistently and sustainably** within written risk limits (night ≤$1500 / DD ≤$500), by only taking setups the regime + per-coin `strategy_id` router allow, with every entry paired to an exit.
 
 **What “consistent” should mean in practice (suggestion):**
 
 | Metric | Suggested definition | Status |
 |--------|----------------------|--------|
-| Process consistency | Every Book/Tactical cycle follows regime gate → router → caps → exits | Partially live (Book has hybrid rules; full router not adopted) |
-| P&L consistency | Prefer many small +EV trades over rare large bets; night heat caps bound overnight risk | Caps exist; **no stated target win-rate / R-multiple / max DD** |
+| Process consistency | Every Book/Tactical cycle follows regime gate → router → caps → exits | Live (full strategy_id router) |
+| P&L consistency | Prefer many small +EV trades over rare large bets; night heat caps bound overnight risk | Caps + DD $500 live; weekly review by strategy_id (no hard $ profit target) |
 | Decision consistency | Same coin + same tape → same `strategy_id` or SKIP; Main decides day confirms after 1h silence | Locked in chat |
 
 ---
@@ -81,18 +75,39 @@
 ### 3.4 Max drawdown (locked 2026-09-06)
 
 - **Max DD:** **$500 USD** peak-to-trough from equity **high-water mark** (RevX account equity).
+- **Warn:** at **$350** (70% of max) — flag `DD_WARN`; tighten night (prefer core-only / no Tier-C).
 - **On breach:** **pause all new risk** — no new night auto buys; Main must not approve new day buys; First stands down new entries.
 - **Still allowed while paused:** inventory TP/exit sells, cancels of open buy bids, Book/Tactical briefs (flag `DD_PAUSE: ON`).
 - **Resume:** only DK explicit resume (or DK override). Main does not self-unpause after 1h timeout for this gate.
 
-### 3.5 Day confirmation (locked 2026-09-06)
-
+### 3.5 Day confirmation (locked 2026-09-06; U7/U8 refined)
 
 1. First proposes; **Main** owns the confirm ask.  
-2. Main **pings DK** before deciding.  
-3. If **no reply within 1 hour**, Main decides **within written policy** (no freestyle risk).  
-4. First **does not** freestyle day places/cancels on silence — waits for Main.  
-5. Night Book auto rules unchanged by this timeout.
+2. **Ping (U7):** Main’s message to DK with **concrete** orders — ticker, side, price, $, `strategy_id`, why. Clock starts at that send. Optional reminder @~45m.  
+3. If **no reply within 1 hour**, Main decides **within written policy** and logs `silent_approve` or `silent_deny`.  
+4. **Silent day-approve size (U8):** ≤ **$1000** new buys, ≤ **3** symbols, same tier/Flush/night-safe `strategy_id` rules. Above that → wait DK or deny. In-policy sells/cancels always OK.  
+5. First **does not** freestyle day places/cancels on silence — waits for Main.  
+6. Night Book auto rules unchanged by this timeout.
+
+### 3.6 CATALYST night (U9 locked 2026-09-06)
+
+- **Never night-auto `CATALYST`** unless DK pre-approved that event ID + levels + max $ the same day. Default: day/Tactical only.
+
+### 3.7 Liquidity tiers (U10 locked 2026-09-06)
+
+| Tier | Names | Notes |
+|------|-------|-------|
+| **A** | BTC, ETH | Tightest zones |
+| **C** | **PUMP, VVV, MORPHO, SYRUP** | Thin; Flush:ON → $0 new; DK-editable list |
+| **B** | All other restricted-list names | Default |
+
+### 3.8 Review cadence (U6 locked 2026-09-06)
+
+- **Daily** (Self-reflect): rule breaks, DD distance to $500, night fill quality.  
+- **Weekly** (Main owns keep/reduce/pause call; Second digs): by `strategy_id` — n, hit-rate, avg R, night MAE.  
+- **No hard $ profit target.** Optional soft: don’t raise caps until 4 clean weeks + DD unused >50% of time.  
+- Don’t change strategy rules on &lt;20–30 fills.
+
 
 ---
 
@@ -199,16 +214,16 @@ Prefer night ladders ~**$100–$150** per rung, still under caps.
 
 | # | Unclear | Why it matters | Suggested fix |
 |---|---------|----------------|---------------|
-| U1 | Goal sentence incomplete (“consistent and…”) | Cornerstone for every trade-off | DK finishes the phrase; Main stores exact wording in profile |
+| U1 | ~~Goal sentence~~ | **LOCKED 2026-09-06** | Grow RevX spot equity consistently and sustainably within night ≤$1500 / DD ≤$500; router-only setups; entry↔exit |
 | U2 | ~~Night cumulative range~~ | **LOCKED 2026-09-06** | Hard cap **$1500** USD new buys per night window |
 | U3 | ~~Buckets vs strategy_id~~ | **LOCKED 2026-09-06** | Full per-coin `strategy_id` orchestrator adopted into Book (DK over Second staged B1). Authoritative tag = `strategy_id`; legacy buckets optional aliases only |
 | U4 | ~~Orchestrator not live~~ | **LOCKED 2026-09-06** | Full router live in Book — regime gate + per-coin `strategy_id` + compiler |
 | U5 | ~~No max DD~~ | **LOCKED 2026-09-06** | Max drawdown **$500 USD** from equity high-water mark → **pause all new risk** (no new night buys, no Main day approve of new buys) until DK resumes; inventory TP/exits and cancels still allowed |
-| U6 | No **profit target / review cadence** | Team can’t score if we’re winning | Weekly self-reflect: hit-rate, avg R, night fill quality; Second owns dig, Main owns “keep / cut strategy” call for DK |
-| U7 | Day 1h timeout: what counts as “ping”? | Ambiguity on clock start | Define: ping = Main’s confirmation message with concrete orders; clock starts at that send; one reminder at ~45m optional |
-| U8 | Main’s day decision after 1h — **size** of discretion | Risk of silent over-trade | Cap Main’s silent day approve to same night-like bounds (e.g. ≤$1000 new buys, ≤3 symbols) unless DK set higher |
-| U9 | `CATALYST` night rule | Easy to leak risk | Keep: never night-auto without prior DK approval of the event levels |
-| U10 | Tier membership for “other thin names” | Flush Tier-C gate is fuzzy | Maintain an explicit Tier-C list in policy (start: PUMP VVV MORPHO SYRUP; add/remove only by DK) |
+| U6 | ~~Review cadence~~ | **LOCKED 2026-09-06** | Daily process check; weekly by strategy_id (n, hit-rate, avg R); no hard $ profit target; Main keep/reduce/pause |
+| U7 | ~~Ping definition~~ | **LOCKED 2026-09-06** | Ping = concrete orders; clock at send; optional @45m; log silent_approve/deny |
+| U8 | ~~Silent day size~~ | **LOCKED 2026-09-06** | Silent day approve ≤$1000 new buys, ≤3 symbols |
+| U9 | ~~CATALYST night~~ | **LOCKED 2026-09-06** | Never night-auto CATALYST without same-day DK pre-approval of event + levels + max $ |
+| U10 | ~~Tier-C list~~ | **LOCKED 2026-09-06** | Tier-C = PUMP, VVV, MORPHO, SYRUP (DK-editable); A=BTC/ETH; B=rest |
 | U11 | Tactical prompt still says “Main” / `briefs.jsonl` from Main | Naming drift after Book rename | Patch Tactical to read Book / `routine="Book"` (First should already be aligning) |
 | U12 | 8h / hourly brief desires in older memory vs live **4h Book** | Conflicting schedules in shared memory | Confirm Book 00/04/08/12/16/20 Madrid is the only scenario brief; archive older 8h/hourly asks |
 | U13 | “Consistent profit” vs night standing approval | Overnight can place without DK eyes | Keep Flush + caps; add optional: if Flush:ON, Main must be woken / night stands down to BTC/ETH-only (already mostly true) |
@@ -230,9 +245,9 @@ If something is outside policy → **escalate to DK** (do not invent risk).
 
 ## 11. Adoption checklist (when you want the router live)
 
-- [ ] Finish cornerstone sentence (U1)  
+- [x] Finish cornerstone sentence (U1) — locked 2026-09-06  
 - [x] Pick hard night cumulative $ (U2) → **$1500** locked 2026-09-06  
-- [ ] Optional: Main silent-day size cap (U8)  
+- [x] Main silent-day size cap (U8) ≤$1000 / ≤3 — locked 2026-09-06  
 - [x] Max DD pause (U5) → **$500** from HWM; pause new risk until DK resumes (locked 2026-09-06)  
 - [x] Merge router into Book prompt (DK full adopt 2026-09-06)  
 - [x] Switch top-6 + JSONL to `strategy_id`  
@@ -247,7 +262,7 @@ If something is outside policy → **escalate to DK** (do not invent risk).
 ```
 LONG-ONLY · 26-coin list · RevX spot
 Book q4h → First executes · Main = policy · Second = digs
-Day: suggest → Main pings DK → 1h silence → Main decides in-policy
+Day: concrete ping → 1h → silent ≤$1k/≤3 · CATALYST no night-auto · Tier-C=PUMP/VVV/MORPHO/SYRUP
 Night 22–08: auto limits ≤$1k/run · ≤$1500 night · ≤3 new symbols
 Flush:ON → no Tier-C auto · prefer BTC/ETH
 Every buy needs TP/SL/time-stop
