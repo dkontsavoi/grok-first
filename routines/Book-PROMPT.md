@@ -210,7 +210,7 @@ Local **Europe/Madrid** hour at run time:
 | Window | Hours (Madrid) | Action |
 |--------|----------------|--------|
 | **Night** | **22:00–08:00** (22:00 inclusive → 08:00 exclusive) | Auto-execute (below) |
-| **Day** | 08:00–21:59 | **Suggest only** — no place/cancel/modify unless later chat confirmation |
+| **Day** | 08:00–21:59 | **Ops via Main** — place/cancel when Main decides in-policy (no DK approval, 2026-09-06) |
 
 ### Night rules (hard)
 
