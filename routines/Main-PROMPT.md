@@ -183,6 +183,16 @@ NEXT ~4 HOURS (as-of Europe/Madrid + UTC). **Do NOT** split Binance into a separ
 7. Night heat line when in night window: cumulative placed tonight vs cap; Flush gate status.
 
 
+
+## Policy locks (2026-09-06 additions)
+
+- **Tier-C (explicit):** PUMP, VVV, MORPHO, SYRUP — Flush:ON → $0 new; DK-editable.
+- **Tier-A:** BTC, ETH. **Tier-B:** rest of restricted list.
+- **CATALYST:** never night-auto unless DK same-day pre-approved event + levels + max $.
+- **DD warn:** at $350 (70%) flag `DD_WARN`; hard pause new risk at $500 HWM.
+- **Day silent approve (via Main):** ≤$1000 new buys, ≤3 symbols, night-safe strategy_ids only.
+- **Exits:** `exits_suggested` mandatory on every top row; 1R = entry − inv.
+
 ## Max drawdown pause (hard)
 
 - **Max DD:** **$500 USD** from equity high-water mark (RevX).
