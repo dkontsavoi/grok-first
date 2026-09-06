@@ -109,6 +109,14 @@ Selfy (First, 07:00 Madrid) grades ~48h Book → scorecard + Concerns
 ## 3. Hard constraints (live until DK changes)
 
 
+
+### Flow 2 / Tactical stand-down (LOCKED 2026-09-06)
+
+**PAUSED** until webhook functionality — weekly token limit.
+- No Flow 2 cron wakes, no Tactical-from-fire, no agent Flow2→revx polling loops.
+- Book 4h + Flow 1 (Book) remain on.
+- Resume only after webhooks + DK/Main unlock.
+
 ### 3.0 RiskLimit object (LOCKED 2026-09-06)
 
 24h risk object (Madrid calendar day). Live: `/workspace/crypto-self-reflect/risk_limit.json`.
