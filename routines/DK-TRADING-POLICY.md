@@ -72,7 +72,7 @@ Price alert (restricted-list coin)
   → Next alert or next Book
 ```
 
-**Status:** Locked. **Primary:** Main cron **hourly** (`0 * * * *`) polls RevX mids vs `/workspace/crypto-self-reflect/active_levels.json` (First updates after Book). On touch → Tactical → Flow 1. Cooldown ~45m/level. **Backup:** `revx monitor price` on top 3–5 active levels (+ Telegram / events). Schema: `flow2/active_levels.schema.md`.
+**Status:** Locked. **Primary:** Main cron **hourly** at :00 Madrid **except Book hours** `00/04/08/12/16/20` (cron `0 1-3,5-7,9-11,13-15,17-19,21-23 * * *`) — those slots are Book/Flow 1 only (~18 Flow 2 wakes/day). Polls RevX mids vs `/workspace/crypto-self-reflect/active_levels.json`. On touch → Tactical → Flow 1. Cooldown ~45m/level. **Backup:** `revx monitor price` on top 3–5 active levels. Schema: `flow2/active_levels.schema.md`.
 
 **Rules (intent):**
 - Alerts only for restricted-list names (and levels from Book/Tactical/inv/TP).
@@ -89,7 +89,7 @@ Price alert (restricted-list coin)
 
 **Why:** Each `[agent]` wake is billable (steps + tokens). Ack ping-pong burns usage without trading value.
 
-**Unchanged:** Flow 1, Flow 2 cadence (hourly), user-facing notifies when there is a real result.
+**Unchanged:** Flow 1, Flow 2 cadence (hourly, skip Book hours), user-facing notifies when there is a real result.
 
 ## 3. Hard constraints (live until DK changes)
 
@@ -339,6 +339,7 @@ If something is outside policy → **escalate to DK** (do not invent risk).
 ```
 LONG-ONLY · 26-coin list · RevX spot
 Flow 1: Book → Second dig → Main/DK (≤1 re-dig) → First executes
+Flow 2: hourly except Book hours 00/04/08/12/16/20
 Book q4h · Main = policy · Second = digs
 Day: concrete ping → **15m** → silent ≤$1k/≤3 · CATALYST no night-auto · Tier-C=PUMP/VVV/MORPHO/SYRUP
 Night 22–08: auto limits ≤$1k/run · ≤$1500 night · ≤3 new symbols
