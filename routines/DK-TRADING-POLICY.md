@@ -126,7 +126,8 @@ Selfy (First, 07:00 Madrid) grades ~48h Book → scorecard + Concerns
 - **max_day_drop** = pause new risk if equity ≤ SOD equity − this (new circuit).
 - **max_hwm_dd** = trailing HWM pause (unchanged role of old DD $500).
 - Flush:ON → Tier-C day cap **$0**; regime may further cut deploy.
-- `reliability_mult` starts **0.8**; raise toward/above old $1500 only after ≥4 clean Selfy weeks (Main proposes, DK locks).
+- `reliability_mult` starts **0.8**.
+- **Aggressive raise** (locked DK 2026-09-06): ≥**2** clean Selfy weeks → +**$250** day deploy / +**$200** per_run / +**$50** Tier-C day, **1 step/week**; skip if DD_WARN / rule break / Flush week; soft ceiling day deploy ≤**20%** equity until reliability=1.0. Main proposes, DK locks. Starters stay tight; climb faster because long-only spot / no leverage / no shorts.
 - Ops autonomy 24×7 still applies **inside** these caps.
 
 ### 3.1 Universe & direction
@@ -395,6 +396,7 @@ Flush:ON → Tier-C $0 · night stand-down if DD≥$350 or Flush+DD≥$250
 LSR>4.0 mild SKIP · Book-only 4h cadence
 Every buy needs TP/SL/time-stop
 HWM DD $500 + SOD day drop $280 → pause new risk (HWM resume = DK)
+Raise: ≥2 clean Selfy weeks → +$250 day/week (skip DD_WARN/Flush); DK locks each step
 Funding = signal only · never short · never freestyle risk
 ```
 
