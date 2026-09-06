@@ -19,7 +19,7 @@
 |--------|----------------------|--------|
 | Process consistency | Every Book/Tactical cycle follows regime gate → router → caps → exits | Live (full strategy_id router) |
 | P&L consistency | Prefer many small +EV trades over rare large bets; night heat caps bound overnight risk | Caps + DD $500 live; weekly review by strategy_id (no hard $ profit target) |
-| Decision consistency | Same coin + same tape → same `strategy_id` or SKIP; Main decides day confirms after 1h silence | Locked in chat |
+| Decision consistency | Same coin + same tape → same `strategy_id` or SKIP; Main decides day confirms after 15m silence | Locked in chat |
 
 ---
 
@@ -58,7 +58,7 @@ Standing operating sequence for each Book (and Tactical when it surfaces actiona
 - **Second never self-starts a loop** off their own dig; only Main assigns digs (proactive OK between cycles, but inside Flow 1 the chain is First→Second→Main).
 - **One additional dig max** per coin/decision set after the initial post-Book dig.
 - **Night:** Flow 1 still applies for non-standing actions; standing night auto (within caps) may place from Book without waiting on Second **only** for night-safe rows already compiled — material concentration / Tier-C / unclear routing should still kick Second before size-up. Cancels of stale/wrong-regime bids can proceed under Main without a full dig when policy is already clear (e.g. >12h stale).
-- **Day:** First suggests → Flow 1 dig → Main ping DK (U7) → silent ≤$1000/≤3 (U8) or DK reply → First executes.
+- **Day:** First suggests → Flow 1 dig → Main ping DK (U7) → 15m silence → silent ≤$1000/≤3 (U8) or DK reply → First executes.
 - Main remains policy gate; DK remains principal; Second research-only.
 
 
@@ -120,11 +120,11 @@ Price alert (restricted-list coin)
 - **Still allowed while paused:** inventory TP/exit sells, cancels of open buy bids, Book/Tactical briefs (flag `DD_PAUSE: ON`).
 - **Resume:** only DK explicit resume (or DK override). Main does not self-unpause after 1h timeout for this gate.
 
-### 3.5 Day confirmation (locked 2026-09-06; U7/U8 refined)
+### 3.5 Day confirmation (locked 2026-09-06; U7/U8 refined; **timeout 15m as of 2026-09-06**)
 
 1. First proposes; **Main** owns the confirm ask.  
-2. **Ping (U7):** Main’s message to DK with **concrete** orders — ticker, side, price, $, `strategy_id`, why. Clock starts at that send. Optional reminder @~45m.  
-3. If **no reply within 1 hour**, Main decides **within written policy** and logs `silent_approve` or `silent_deny`.  
+2. **Ping (U7):** Main’s message to DK with **concrete** orders — ticker, side, price, $, `strategy_id`, why. Clock starts at that send. Optional reminder @~10m.  
+3. If **no reply within 15 minutes**, Main decides **within written policy** and logs `silent_approve` or `silent_deny`. (DK expects Main to decide most of the time — time is money.)  
 4. **Silent day-approve size (U8):** ≤ **$1000** new buys, ≤ **3** symbols, same tier/Flush/night-safe `strategy_id` rules. Above that → wait DK or deny. In-policy sells/cancels always OK.  
 5. First **does not** freestyle day places/cancels on silence — waits for Main.  
 6. Night Book auto rules unchanged by this timeout.
@@ -286,7 +286,7 @@ Prefer night ladders ~**$100–$150** per rung, still under caps.
 | U4 | ~~Orchestrator not live~~ | **LOCKED 2026-09-06** | Full router live in Book — regime gate + per-coin `strategy_id` + compiler |
 | U5 | ~~No max DD~~ | **LOCKED 2026-09-06** | Max drawdown **$500 USD** from equity high-water mark → **pause all new risk** (no new night buys, no Main day approve of new buys) until DK resumes; inventory TP/exits and cancels still allowed |
 | U6 | ~~Review cadence~~ | **LOCKED 2026-09-06** | Daily process check; weekly by strategy_id (n, hit-rate, avg R); no hard $ profit target; Main keep/reduce/pause |
-| U7 | ~~Ping definition~~ | **LOCKED 2026-09-06** | Ping = concrete orders; clock at send; optional @45m; log silent_approve/deny |
+| U7 | ~~Ping definition~~ | **LOCKED 2026-09-06** (timeout **15m** from 2026-09-06) | Ping = concrete orders; clock at send; optional @~10m; if no reply in **15 minutes** Main decides in-policy; log silent_approve/deny |
 | U8 | ~~Silent day size~~ | **LOCKED 2026-09-06** | Silent day approve ≤$1000 new buys, ≤3 symbols |
 | U9 | ~~CATALYST night~~ | **LOCKED 2026-09-06** | Never night-auto CATALYST without same-day DK pre-approval of event + levels + max $ |
 | U10 | ~~Tier-C list~~ | **LOCKED 2026-09-06** | Tier-C = PUMP, VVV, MORPHO, SYRUP (DK-editable); A=BTC/ETH; B=rest |
@@ -301,7 +301,7 @@ Prefer night ladders ~**$100–$150** per rung, still under caps.
 
 1. **DK explicit override** (chat) wins.  
 2. Else **written hard constraints** in this doc / live Book prompt.  
-3. Else **Main** judgment within policy (incl. 1h day-confirm timeout).  
+3. Else **Main** judgment within policy (incl. 15m day-confirm timeout).  
 4. Else First executes Book/Tactical literally.  
 5. Second never authorizes live risk — research only.
 
@@ -329,7 +329,7 @@ If something is outside policy → **escalate to DK** (do not invent risk).
 LONG-ONLY · 26-coin list · RevX spot
 Flow 1: Book → Second dig → Main/DK (≤1 re-dig) → First executes
 Book q4h · Main = policy · Second = digs
-Day: concrete ping → 1h → silent ≤$1k/≤3 · CATALYST no night-auto · Tier-C=PUMP/VVV/MORPHO/SYRUP
+Day: concrete ping → **15m** → silent ≤$1k/≤3 · CATALYST no night-auto · Tier-C=PUMP/VVV/MORPHO/SYRUP
 Night 22–08: auto limits ≤$1k/run · ≤$1500 night · ≤3 new symbols
 Flush:ON → Tier-C $0 · night stand-down if DD≥$350 or Flush+DD≥$250
 LSR>4.0 mild SKIP · Book-only 4h cadence
