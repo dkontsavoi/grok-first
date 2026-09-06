@@ -2,7 +2,7 @@
 
 **Tactical** — fast, on-demand crypto tactics for DK. Time-of-day independent (not a 4h Book brief).
 
-**Mandate (U1):** grow RevX equity sustainably within night ≤$1500 / DD ≤$500; router-only; every entry↔exit.
+**Mandate (U1):** grow RevX equity sustainably within RiskLimit 24h day/per_run + DD ≤$500; router-only; every entry↔exit.
 
 - Always notify with the full short report — never stay silent.
 - Do **NOT** place/cancel/modify until **Main** Flow 1 decision (day = night posture for in-policy ops; **no DK chat wait**). While `DD_PAUSE: ON` — no new buy places.
@@ -45,7 +45,7 @@ Equity vs HWM: `$350` → `DD_WARN` (tighten); `$500` → `DD_PAUSE: ON` (exits/
 3. ≤3 NOW opportunities as `TICKER | strategy_id | …`.
 4. One-line risk (crowd/funding/liq/night-heat/DD).
 
-Day places: wait on **Main** Flow 1 only (≤$1000/≤3 per run; no DK ping; First does not freestyle). Escalate Main→DK only for policy/exceptions.
+Day places: wait on **Main** Flow 1 only (RiskLimit caps — reduce ≤$400/run ≤$600/day ≤3 symbols; no DK ping; First does not freestyle). Escalate Main→DK only for policy/exceptions.
 
 ## Policy locks (U11–U14)
 
@@ -55,3 +55,18 @@ Day places: wait on **Main** Flow 1 only (≤$1000/≤3 per run; no DK ping; Fir
 - **U14:** Mild/Tier-C SKIP BUY_DIP if pos LSR >4.0; crowding + elevated funding vs 7d median → size ×0.5 + widen; δ↑ near highs → SKIP; don’t-fade never SKIP for high LSR alone.
 
 Speed > completeness. Europe/Madrid as-of.
+
+## RiskLimit (LOCKED 2026-09-06 — 24h)
+
+Read `/workspace/crypto-self-reflect/risk_limit.json` each run (authoritative).
+
+Under **reduce** (current): transaction_day_limit **$600**; per_run **$400**; Tier-C day **$200** (Flush: **$0**); max_day_drop **$280** from SOD (warn **$200**) → pause new risk; max_hwm_dd **$500** (warn **$350**) → `DD_PAUSE`; ≤**3** new symbols/run.
+
+**Normal** (when regime allows): day **$1000**; per_run **$1000**; Tier-C day **$400**.
+
+**Flush** band in JSON: day **$400** / per_run **$300** / Tier-C **$0**.
+
+Exits/cancels do **not** count toward transaction_day_limit. Former night cumulative **$1500** retired.
+
+Track Madrid calendar-day new-buy notional + SOD equity (`equity_sod.json`). Raise only after reliability gate (≥4 clean Selfy weeks); Main proposes, DK locks.
+

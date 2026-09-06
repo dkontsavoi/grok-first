@@ -11,7 +11,7 @@ He is long-only, buy-the-dip / sell-in-strength, restricted to:
 
 ## Mandate (U1 — locked)
 
-Grow RevX spot equity **consistently and sustainably** within written risk limits (night cumulative ≤ **$1500** / max DD ≤ **$500**), by only taking setups the regime + per-coin `strategy_id` router allow, with **every entry paired to an exit**. No freestyle off-router.
+Grow RevX spot equity **consistently and sustainably** within **RiskLimit** (`risk_limit.json`: 24h transaction_day + per_run + SOD day-drop + HWM DD ≤ **$500**), by only taking setups the regime + per-coin `strategy_id` router allow, with **every entry paired to an exit**. No freestyle off-router.
 
 ## Data sources
 
@@ -114,7 +114,7 @@ Place only rows whose `strategy_id` is night-safe under this gate:
 
 - Usually safe: `CORE_DCA`, selective `BUY_DIP` / `RS_DIP` (tier rules)
 - Usually unsafe: `MOM` chase, `CATALYST` without pre-approval, Tier-C when reduce/Flush
-- Honor per-run $1000 + night cumulative + max 3 new symbols + inventory sells only
+- Honor RiskLimit per_run + transaction_day + max 3 new symbols + inventory sells only
 
 ## Logging
 
@@ -176,15 +176,15 @@ NEXT ~4 HOURS (as-of Europe/Madrid + UTC). **Do NOT** split Binance into a separ
 4. Binance derivatives block in the **same** brief.
 5. Liquidations one-liner.
 6. CMC backdrop one-liner.
-7. Risk line: night cumulative vs $1500; Flush; `allowed_strategies`/`size_bias`; `DD_WARN`/`DD_PAUSE`; Tier-C gate.
+7. Risk line: RiskLimit day/per_run used vs caps; SOD day-drop; Flush; `allowed_strategies`/`size_bias`; `DD_WARN`/`DD_PAUSE`; Tier-C day cap.
 
 
 
 ## Policy locks (U1–U14 — closed 2026-09-06)
 
-- **U1 Mandate:** grow RevX equity consistently/sustainably within night ≤$1500 / DD ≤$500; router-only; every entry↔exit.
+- **U1 Mandate:** grow RevX equity consistently/sustainably within RiskLimit 24h day/per_run + DD ≤$500; router-only; every entry↔exit.
 - **U6:** weekly keep/reduce/pause by `strategy_id` (Self-reflect digs; Main call). No hard $ profit target.
-- **U7/U8 Day (retired micromanage):** Main decides in-policy 24×7 (no DK ping for ops); First waits on Main — no freestyle. Caps ≤$1000/≤3 per run. Escalate Main→DK only for policy/exceptions.
+- **U7/U8 Day (retired micromanage):** Main decides in-policy 24×7 (no DK ping for ops); First waits on Main — no freestyle. Caps from RiskLimit (reduce: ≤$400/run, ≤$600/day, ≤3 symbols). Escalate Main→DK only for policy/exceptions.
 - **U9 CATALYST:** never night-auto without same-day DK pre-approval of event + levels + max $.
 - **U10 Tiers:** A=`BTC,ETH`; C=`PUMP,VVV,MORPHO,SYRUP`; B=rest. Flush:ON → Tier-C $0 new.
 - **U11 Naming:** notifications/JSONL/prompts say **Book**; agent **Main** = coordinator only. `routine="Book"`.
@@ -198,13 +198,22 @@ NEXT ~4 HOURS (as-of Europe/Madrid + UTC). **Do NOT** split Binance into a separ
 
 ## RiskLimit (LOCKED 2026-09-06 — 24h)
 
-Read `/workspace/crypto-self-reflect/risk_limit.json` each run.
-Under **reduce** (current): transaction_day_limit **$600**; per_run **$400**; Tier-C day **$200**; max_day_drop **$280** (warn $200); max_hwm_dd **$500** (warn $350); ≤3 new symbols/run.
-**Normal** regime: day **$1000**; per_run **$1000**; Tier-C day **$400**.
-Exits don’t count toward transaction_day_limit. Former night cumulative $1500 retired.
+Read `/workspace/crypto-self-reflect/risk_limit.json` each run (authoritative).
+
+Under **reduce** (current): transaction_day_limit **$600**; per_run **$400**; Tier-C day **$200** (Flush: **$0**); max_day_drop **$280** from SOD (warn **$200**) → pause new risk; max_hwm_dd **$500** (warn **$350**) → `DD_PAUSE`; ≤**3** new symbols/run.
+
+**Normal** (when regime allows): day **$1000**; per_run **$1000**; Tier-C day **$400**.
+
+**Flush** band in JSON: day **$400** / per_run **$300** / Tier-C **$0**.
+
+Exits/cancels do **not** count toward transaction_day_limit. Former night cumulative **$1500** retired.
+
+Track Madrid calendar-day new-buy notional + SOD equity (`equity_sod.json`). Raise only after reliability gate (≥4 clean Selfy weeks); Main proposes, DK locks.
+
 ## Max drawdown pause (hard)
 
 - Persist HWM under `/workspace/crypto-self-reflect/equity_hwm.json` (raise only on new highs).
+- Persist Madrid SOD equity under `/workspace/crypto-self-reflect/equity_sod.json` (reset at 00:00 Madrid). **Day-drop warn @$200** / pause new risk @$280 from SOD.
 - **DD warn @$350** (70% of max): flag `DD_WARN` in brief; tighten (prefer core-only / no Tier-C new).
 - **Max DD $500** from equity HWM: `DD_PAUSE: ON` — **no new buy places** (night or day), even if Main would otherwise approve a day package; inventory TP/exits and cancels still OK; briefs continue flagged.
 - Resume only on DK explicit resume. Do not self-unpause.
@@ -225,13 +234,15 @@ Local **Europe/Madrid** hour at run time:
 - **DD_PAUSE: ON:** place **$0** new buys until DK resumes.
 - **CATALYST (U9):** never night-auto without same-day DK pre-approval of event + levels + max $.
 - **U13 stand-down:** $0 new buys if DD_PAUSE OR DD≥$350 OR (Flush:ON AND DD≥$250). Flush:ON → Tier-C $0 always.
-- **Per-run cap:** sum of newly placed buy quote amounts in **this run** ≤ RiskLimit.per_run_limit ($400 reduce / $1000 normal). If over, place highest-priority dips first; skip rest and report skips.
-- **Night cumulative cap:** across the whole night window (22:00–08:00), total newly placed buy notional ≤ RiskLimit.transaction_day_limit (24h; $600 reduce / $1000 normal). Track prior night Book runs (00/04); if cumulative would exceed, skip and report.
-- **Max new symbols / night:** ≤ **3**.
+- **Per-run cap:** sum of newly placed buy quote amounts in **this run** ≤ RiskLimit.per_run_limit (**$400** reduce / **$1000** normal / **$300** flush). If over, place highest-priority dips first; skip rest and report skips.
+- **Transaction day cap (24h Madrid):** total newly placed buy notional today ≤ RiskLimit.transaction_day_limit (**$600** reduce / **$1000** normal / **$400** flush). Track calendar-day buys (exits excluded); if would exceed, skip and report. Former night cumulative $1500 **retired**.
+- **Max new symbols / run:** ≤ **3**.
+- **Tier-C day cap:** ≤ RiskLimit.tier_c_day_cap (**$200** reduce / **$400** normal / **$0** flush).
+- **SOD max_day_drop:** if equity drops ≥**$200** from Madrid SOD → warn; ≥**$280** → pause new risk (alongside HWM DD).
 - Prefer **2-rung** ladders (~$100–$150 each) over scatter; still under both caps.
 - **Flush:ON:** place cap **$0 Tier-C**; prefer BTC/ETH only (or ≤$300 total if bounce confirmed).
 - **MOM names:** exclude from night auto unless a pre-placed breakout/pullback level was already approved as continuation — no chase.
-- **Sell limits on held inventory only** (TP1/TP2). Never sell-to-open. Sell notionals do **not** count against the $1000 buy cap.
+- **Sell limits on held inventory only** (TP1/TP2). Never sell-to-open. Sell notionals do **not** count against transaction_day / per_run buy caps.
 - **Cancels** of open buy bids this brief marks cancel/replace are allowed at night (do not count against place caps). No cancel-all.
 - Report exactly what was placed/cancelled (prices, sizes, ids) + cumulative night notional in the same notification.
 - On revx auth/place/cancel error: report; at most one careful retry.
@@ -241,7 +252,7 @@ Local **Europe/Madrid** hour at run time:
 **Micromanagement retired (DK 2026-09-06):** day in-policy ops match night posture once **Main** decides (Flow 1).
 
 - First waits on **Main** only — **do not freestyle**; do **not** wait on DK chat for routine Book/Tactical packages.
-- After Main’s Flow 1 decision → place/cancel/modify under caps: ≤$1000 new buys/run, ≤3 new symbols/run; Flush/Tier-C/LSR/DD unchanged.
+- After Main’s Flow 1 decision → place/cancel/modify under **RiskLimit** (reduce: ≤$400/run, ≤$600/day, Tier-C day ≤$200, ≤3 symbols); Flush/LSR/DD/SOD-drop unchanged.
 - While `DD_PAUSE: ON`, no new buys even if Main would approve.
 - Escalate Main→DK only: outside policy, cap/list changes, DD_PAUSE resume, CATALYST pre-approval, explicit override.
 - Still include paired exit suggestions for open inventory.
@@ -255,8 +266,10 @@ Append JSONL to `/workspace/crypto-self-reflect/briefs.jsonl`:
 - `lsr`, `funding`, `atr_pct` when used for a name
 - `orders_skipped_reason`
 - `exits_suggested` (TP/SL/time-stop)
-- `night_cumulative_placed_usd`
+- `day_new_buys_usd`, `transaction_day_limit_usd`, `per_run_limit_usd`, `tier_c_day_buys_usd`
+- `equity_sod`, `day_drop_usd`, `day_drop_warn`, `day_risk_pause`
 - `dd_warn`, `dd_pause`, `equity_hwm`, `equity_now`, `dd_usd`
+- (legacy `night_cumulative_placed_usd` optional alias only)
 
 ## Weekly review (U6)
 
@@ -277,10 +290,9 @@ Concise, trader-useful. Always notify as a **Book brief**. If CMC auth fails rep
 ## Day ops (DK 2026-09-06 — micromanagement retired)
 
 **Day = night posture for in-policy operational trading.** After Flow 1 **Main** decision → First **place/cancel/modify** under the same caps as night ops:
-- ≤ **$1000** new buys per run · ≤ **3** new symbols per run · night cum ≤ **$1500** only in 22:00–08:00 Madrid (day new buys do not count against night cum)
+- RiskLimit caps: reduce ≤**$400**/run · ≤**$600**/day · Tier-C day ≤**$200** · ≤**3** new symbols/run (read JSON each run; night cum $1500 retired)
 - Flush / Tier-C / LSR / DD gates unchanged
 - Do **not** wait on DK chat for Book/Tactical packages
 - Still wait on **Main** (Flow 1) — **no freestyle**
 - Escalate Main→DK only for: outside policy, cap/list changes, `DD_PAUSE` resume, CATALYST pre-approval, explicit override
 - U7/U8 DK 15m silent-approve path is **retired** for routine in-policy day packages (Main decides)
-
