@@ -1,68 +1,85 @@
-# active_levels.json schema (Flow 2)
+# active_levels.json schema (Flow 2) — locked 2026-09-06
 
 **Path:** `/workspace/crypto-self-reflect/active_levels.json`  
-**Writer:** First after each Book (and after Flow 1 decisions that change levels)  
-**Reader:** Main Flow-2 watcher cron (~every 10m)
+**Writer:** First after every Book (and after Tactical/Flow 1 that changes working orders)  
+**Reader / cooldown writer:** Main Flow-2 watcher cron (`*/10 * * * *`)
+
+## Canonical shape (Second + Main merged)
 
 ```json
 {
   "as_of_madrid": "2026-09-06T04:05:00+02:00",
-  "book_run_id": "optional-string",
-  "regime": { "flush": "off", "size_bias": "reduce", "allowed_strategies": ["CORE_DCA","BUY_DIP","RS_DIP"] },
-  "cooldown_minutes": 45,
-  "levels": [
-    {
-      "id": "BTC-CORE_DCA-zone-lo",
-      "ticker": "BTC",
-      "pair": "BTC-USD",
-      "kind": "zone_touch",
-      "strategy_id": "CORE_DCA",
-      "side": "buy",
-      "price": 79000,
-      "price_hi": 79400,
-      "direction": "into_band",
-      "inv": 78500,
-      "priority": 1,
-      "night_safe": false,
-      "active": true,
-      "note": "CORE_DCA day/later"
-    },
-    {
-      "id": "PUMP-TP1",
-      "ticker": "PUMP",
-      "pair": "PUMP-USD",
-      "kind": "tp_vicinity",
-      "strategy_id": "INVENTORY",
-      "side": "sell",
-      "price": 0.00425,
-      "tolerance_pct": 1.0,
-      "priority": 2,
-      "night_safe": true,
-      "active": true
-    },
-    {
-      "id": "VVV-inv",
-      "ticker": "VVV",
-      "pair": "VVV-USD",
-      "kind": "inv_break",
-      "side": "buy_ladder",
-      "price": 16.4,
-      "direction": "below",
-      "priority": 1,
-      "night_safe": true,
-      "active": true
-    }
-  ],
-  "last_fired": {
-    "BTC-CORE_DCA-zone-lo": "2026-09-06T12:00:00+02:00"
-  },
+  "book_run_id": "2026-09-06T04:05",
+  "cooldown_minutes_default": 45,
   "flush_proxy": {
     "enabled": true,
     "btc_pair": "BTC-USD",
-    "one_h_range_pct": 1.5
+    "btc_1h_range_pct": 1.5,
+    "cooldown_key": "flush:BTC",
+    "cooldown_min": 60
+  },
+  "levels": [
+    {
+      "id": "PUMP:tp1",
+      "ticker": "PUMP",
+      "pair": "PUMP-USD",
+      "kind": "tp",
+      "strategy_id": "INVENTORY",
+      "side": "above",
+      "price": 0.00425,
+      "tolerance_pct": 0.5,
+      "inv": null,
+      "note": "PUMP TP1",
+      "cooldown_min": 45,
+      "enabled": true,
+      "night_safe": true,
+      "priority": 1
+    },
+    {
+      "id": "VVV:zone_hi",
+      "ticker": "VVV",
+      "pair": "VVV-USD",
+      "kind": "zone",
+      "strategy_id": "BUY_DIP",
+      "side": "below",
+      "price": 16.85,
+      "tolerance_pct": 0.3,
+      "inv": 16.4,
+      "note": "VVV ladder top",
+      "cooldown_min": 45,
+      "enabled": true,
+      "night_safe": true,
+      "priority": 1
+    }
+  ],
+  "cooldowns": {
+    "PUMP:tp1": "2026-09-06T03:00:00+02:00"
   }
 }
 ```
 
-**Kinds:** `zone_touch` | `inv_break` | `tp_vicinity` | `flush_proxy`  
-**Rules:** Only `active: true` levels are watched. Max useful set ~8–15, not full 26. After fire, set `last_fired[id]` and honor `cooldown_minutes`.
+## Field rules
+- `kind`: `zone` | `inv` | `tp` | `flush_proxy`
+- **zone/ladder buy** (`side: below`): fire when `mid <= price * (1 + tolerance_pct/100)`
+- **tp sell** (`side: above`): fire when `mid >= price * (1 - tolerance_pct/100)`
+- **inv**: fire when `mid <= inv` (long invalidation)
+- `id` = cooldown key in `cooldowns`
+- First **replaces `levels`** each Book but **preserves `cooldowns`**
+- Disable cancelled orders with `enabled: false` (or drop from array)
+- Keep active set small (~8–15), not all 26
+
+## First checklist each Book
+1. Open buys → zone rows; inventory TP sells → tp rows; optional day CORE BTC/ETH zones
+2. Always `flush_proxy.enabled: true`
+3. Merge cooldowns from prior file
+4. Log `active_levels_count=N` in Book brief
+
+## Backup revx monitor (top live tonight)
+```bash
+revx monitor price VVV-USD --direction below --threshold 16.85 --interval 10
+revx monitor price MORPHO-USD --direction below --threshold 2.45 --interval 10
+revx monitor price PUMP-USD --direction above --threshold 0.00425 --interval 10
+revx monitor price JUP-USD --direction above --threshold 0.232 --interval 10
+revx monitor price-change BTC-USD --direction fall --threshold 1.5 --lookback 1 --interval 10
+```
+Cron remains authoritative; monitors = backup / Telegram failsafe.
