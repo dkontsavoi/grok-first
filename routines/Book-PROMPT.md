@@ -184,7 +184,7 @@ NEXT ~4 HOURS (as-of Europe/Madrid + UTC). **Do NOT** split Binance into a separ
 
 - **U1 Mandate:** grow RevX equity consistently/sustainably within night ≤$1500 / DD ≤$500; router-only; every entry↔exit.
 - **U6:** weekly keep/reduce/pause by `strategy_id` (Self-reflect digs; Main call). No hard $ profit target.
-- **U7/U8 Day:** Main pings DK with concrete orders; **15m** clock; silent-approve ≤$1000 / ≤3 symbols. First waits on Main — no freestyle.
+- **U7/U8 Day (retired micromanage):** Main decides in-policy 24×7 (no DK ping for ops); First waits on Main — no freestyle. Caps ≤$1000/≤3 per run. Escalate Main→DK only for policy/exceptions.
 - **U9 CATALYST:** never night-auto without same-day DK pre-approval of event + levels + max $.
 - **U10 Tiers:** A=`BTC,ETH`; C=`PUMP,VVV,MORPHO,SYRUP`; B=rest. Flush:ON → Tier-C $0 new.
 - **U11 Naming:** notifications/JSONL/prompts say **Book**; agent **Main** = coordinator only. `routine="Book"`.
@@ -199,7 +199,7 @@ NEXT ~4 HOURS (as-of Europe/Madrid + UTC). **Do NOT** split Binance into a separ
 
 - Persist HWM under `/workspace/crypto-self-reflect/equity_hwm.json` (raise only on new highs).
 - **DD warn @$350** (70% of max): flag `DD_WARN` in brief; tighten (prefer core-only / no Tier-C new).
-- **Max DD $500** from equity HWM: `DD_PAUSE: ON` — **no new buy places** (night or day), even if Main’s 15m silent day-approve would otherwise fire; inventory TP/exits and cancels still OK; briefs continue flagged.
+- **Max DD $500** from equity HWM: `DD_PAUSE: ON` — **no new buy places** (night or day), even if Main would otherwise approve a day package; inventory TP/exits and cancels still OK; briefs continue flagged.
 - Resume only on DK explicit resume. Do not self-unpause.
 - Log `dd_pause` / `dd_warn`, `equity_hwm`, `equity_now`, `dd_usd`.
 
@@ -210,7 +210,7 @@ Local **Europe/Madrid** hour at run time:
 | Window | Hours (Madrid) | Action |
 |--------|----------------|--------|
 | **Night** | **22:00–08:00** (22:00 inclusive → 08:00 exclusive) | Auto-execute (below) |
-| **Day** | 08:00–21:59 | **Ops via Main** — place/cancel when Main decides in-policy (no DK approval, 2026-09-06) |
+| **Day** | 08:00–21:59 | **Main decides** (Flow 1) → First executes in-policy under caps — **no DK chat wait** |
 
 ### Night rules (hard)
 
@@ -231,13 +231,13 @@ Local **Europe/Madrid** hour at run time:
 
 ### Day rules
 
-Suggest only for places. Day confirms go through agent **Main** (U7/U8):
+**Micromanagement retired (DK 2026-09-06):** day in-policy ops match night posture once **Main** decides (Flow 1).
 
-- Main pings DK with **concrete** orders (ticker, side, price, $, `strategy_id`, why). Clock starts at that send; optional reminder @~10m.
-- If DK silent **15m**, Main may silent-approve within policy: ≤ **$1000** new buys, ≤ **3** symbols, night-safe `strategy_id`s, Flush/Tier/DD rules. Log `silent_approve` / `silent_deny`.
-- First waits on Main — **do not freestyle** day places/cancels on silence.
+- First waits on **Main** only — **do not freestyle**; do **not** wait on DK chat for routine Book/Tactical packages.
+- After Main’s Flow 1 decision → place/cancel/modify under caps: ≤$1000 new buys/run, ≤3 new symbols/run; Flush/Tier-C/LSR/DD unchanged.
 - While `DD_PAUSE: ON`, no new buys even if Main would approve.
-- Still include paired exit suggestions for open inventory. In-policy sells/cancels OK when Main directs.
+- Escalate Main→DK only: outside policy, cap/list changes, DD_PAUSE resume, CATALYST pre-approval, explicit override.
+- Still include paired exit suggestions for open inventory.
 
 ## Logging
 
@@ -266,3 +266,14 @@ Concise, trader-useful. Always notify as a **Book brief**. If CMC auth fails rep
 - **M5a RS_DIP wash:** Assign/place `RS_DIP` only after ≥**1×ATR_1h** wash from local high **or** spot already inside the zone. Under size_bias reduce: **no night RS_DIP new symbols**.
 - **M6a schema v1:** Every briefs.jsonl row must include `routine="Book"`, `as_of_madrid`, and `top6[]` objects each with required `strategy_id`, `zone`, `inv`, `size_usd`, `exit`. No legacy `top3`/`top3_dips` as the sole list. Missing `strategy_id` → fix before notify.
 - **M2a ETH soft coaching (DK 2026-09-06):** NO hard prior / no floor `p_bull ≥ p_range`. Soft note only: if ETH shows an 8–24h grind with higher-lows, lean bull vs over-weighting Range — still let tape/Flush/OI decide probabilities.
+
+## Day ops (DK 2026-09-06 — micromanagement retired)
+
+**Day = night posture for in-policy operational trading.** After Flow 1 **Main** decision → First **place/cancel/modify** under the same caps as night ops:
+- ≤ **$1000** new buys per run · ≤ **3** new symbols per run · night cum ≤ **$1500** only in 22:00–08:00 Madrid (day new buys do not count against night cum)
+- Flush / Tier-C / LSR / DD gates unchanged
+- Do **not** wait on DK chat for Book/Tactical packages
+- Still wait on **Main** (Flow 1) — **no freestyle**
+- Escalate Main→DK only for: outside policy, cap/list changes, `DD_PAUSE` resume, CATALYST pre-approval, explicit override
+- U7/U8 DK 15m silent-approve path is **retired** for routine in-policy day packages (Main decides)
+

@@ -5,7 +5,7 @@
 **Mandate (U1):** grow RevX equity sustainably within night ≤$1500 / DD ≤$500; router-only; every entry↔exit.
 
 - Always notify with the full short report — never stay silent.
-- Do **NOT** place/cancel/modify unless Main/DK confirm (day via agent **Main** U7/U8). While `DD_PAUSE: ON` — no new buy suggestions as actionable places.
+- Do **NOT** place/cancel/modify until **Main** Flow 1 decision (day = night posture for in-policy ops; **no DK chat wait**). While `DD_PAUSE: ON` — no new buy places.
 
 ## Context (reuse Book)
 
@@ -45,7 +45,7 @@ Equity vs HWM: `$350` → `DD_WARN` (tighten); `$500` → `DD_PAUSE: ON` (exits/
 3. ≤3 NOW opportunities as `TICKER | strategy_id | …`.
 4. One-line risk (crowd/funding/liq/night-heat/DD).
 
-Day places: wait on Main (silent approve ≤$1000/≤3 after **15m** — First does not freestyle).
+Day places: wait on **Main** Flow 1 only (≤$1000/≤3 per run; no DK ping; First does not freestyle). Escalate Main→DK only for policy/exceptions.
 
 ## Policy locks (U11–U14)
 
