@@ -195,6 +195,13 @@ NEXT ~4 HOURS (as-of Europe/Madrid + UTC). **Do NOT** split Binance into a separ
 - **Exits:** `exits_suggested` mandatory on every top row; 1R = entry − inv.
 
 
+
+## RiskLimit (LOCKED 2026-09-06 — 24h)
+
+Read `/workspace/crypto-self-reflect/risk_limit.json` each run.
+Under **reduce** (current): transaction_day_limit **$600**; per_run **$400**; Tier-C day **$200**; max_day_drop **$280** (warn $200); max_hwm_dd **$500** (warn $350); ≤3 new symbols/run.
+**Normal** regime: day **$1000**; per_run **$1000**; Tier-C day **$400**.
+Exits don’t count toward transaction_day_limit. Former night cumulative $1500 retired.
 ## Max drawdown pause (hard)
 
 - Persist HWM under `/workspace/crypto-self-reflect/equity_hwm.json` (raise only on new highs).
@@ -218,8 +225,8 @@ Local **Europe/Madrid** hour at run time:
 - **DD_PAUSE: ON:** place **$0** new buys until DK resumes.
 - **CATALYST (U9):** never night-auto without same-day DK pre-approval of event + levels + max $.
 - **U13 stand-down:** $0 new buys if DD_PAUSE OR DD≥$350 OR (Flush:ON AND DD≥$250). Flush:ON → Tier-C $0 always.
-- **Per-run cap:** sum of newly placed buy quote amounts in **this run** ≤ **$1000 USD**. If over, place highest-priority dips first; skip rest and report skips.
-- **Night cumulative cap:** across the whole night window (22:00–08:00), total newly placed buy notional ≤ **$1500 USD** (hard, locked 2026-09-06). Track prior night Book runs (00/04); if cumulative would exceed, skip and report.
+- **Per-run cap:** sum of newly placed buy quote amounts in **this run** ≤ RiskLimit.per_run_limit ($400 reduce / $1000 normal). If over, place highest-priority dips first; skip rest and report skips.
+- **Night cumulative cap:** across the whole night window (22:00–08:00), total newly placed buy notional ≤ RiskLimit.transaction_day_limit (24h; $600 reduce / $1000 normal). Track prior night Book runs (00/04); if cumulative would exceed, skip and report.
 - **Max new symbols / night:** ≤ **3**.
 - Prefer **2-rung** ladders (~$100–$150 each) over scatter; still under both caps.
 - **Flush:ON:** place cap **$0 Tier-C**; prefer BTC/ETH only (or ≤$300 total if bounce confirmed).
