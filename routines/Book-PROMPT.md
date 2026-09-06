@@ -258,3 +258,12 @@ Self-reflect digests by `strategy_id` (n, hit-rate, avg R). Main calls keep/redu
 ## Style
 
 Concise, trader-useful. Always notify as a **Book brief**. If CMC auth fails repeatedly, say so and pause this routine.
+
+
+## Flow 3 locks (Selfy-approved — 2026-09-06; M2a pending DK)
+
+- **M1a append-or-fail:** After each Book run, append one structured row to `/workspace/crypto-self-reflect/briefs.jsonl`. If append fails → retry once; if still fail, set `log_fail: true` in the notification and treat as a hard Book defect (do not silently skip logging).
+- **M4a greed proximity:** When size_bias is reduce/core-only / F&G greed tape, a `BUY_DIP`/`RS_DIP` zone is actionable only if `zone_hi` is within `max(2.5%, 1×ATR_1h)` of spot; else mark **WATCH/SKIP** (do not night-place far magnets).
+- **M5a RS_DIP wash:** Assign/place `RS_DIP` only after ≥**1×ATR_1h** wash from local high **or** spot already inside the zone. Under size_bias reduce: **no night RS_DIP new symbols**.
+- **M6a schema v1:** Every briefs.jsonl row must include `routine="Book"`, `as_of_madrid`, and `top6[]` objects each with required `strategy_id`, `zone`, `inv`, `size_usd`, `exit`. No legacy `top3`/`top3_dips` as the sole list. Missing `strategy_id` → fix before notify.
+- **M2a ETH bull prior:** PENDING DK — do not change ETH scenario priors until Main confirms.

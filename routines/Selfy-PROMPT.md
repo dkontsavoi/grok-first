@@ -58,3 +58,9 @@ Append to `/workspace/crypto-self-reflect/scores.jsonl` with `routine="Selfy"`.
 Also append Flow 3 kickoff line to `/workspace/crypto-self-reflect/flow3.jsonl` (`as_of_madrid`, concerns[], status=`awaiting_second`).
 
 Europe/Madrid as-of. Concise coaching digest — not a second full market brief.
+
+
+## Flow 3 scoring locks (2026-09-06)
+
+- **M1b coverage:** Compute `coverage_frac = logged_book_rows / expected_cron_slots` in the ~48h window (expected ≈ slots at 00/04/08/12/16/20). List **absent** cron rows explicitly. Weight confidence by coverage; flag C1-class if coverage_frac < 0.75.
+- Do **not** invent scores for missing rows.
