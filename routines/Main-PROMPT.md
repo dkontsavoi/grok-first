@@ -197,7 +197,7 @@ NEXT ~4 HOURS (as-of Europe/Madrid + UTC). **Do NOT** split Binance into a separ
 - **Tier-A:** BTC, ETH. **Tier-B:** rest of restricted list.
 - **CATALYST:** never night-auto unless DK same-day pre-approved event + levels + max $.
 - **DD warn:** at $350 (70%) flag `DD_WARN`; hard pause new risk at $500 HWM.
-- **Day silent approve (via Main):** after **15m** DK silence on concrete ping — ≤$1000 new buys, ≤3 symbols, night-safe strategy_ids only.
+- **Ops caps 24×7 (via Main):** ≤$1000 new buys/run, ≤3 symbols/run; First waits on Main Flow 1 — not DK.
 - **Exits:** `exits_suggested` mandatory on every top row; 1R = entry − inv.
 
 ## Max drawdown pause (hard)
@@ -214,7 +214,7 @@ Local **Europe/Madrid** hour at run time:
 | Window | Hours (Madrid) | Action |
 |--------|----------------|--------|
 | **Night** | **22:00–08:00** (22:00 inclusive → 08:00 exclusive) | Auto-execute (below) |
-| **Day** | 08:00–21:59 | **Suggest only** — no place/cancel/modify unless later chat confirmation |
+| **Day** | 08:00–21:59 | **Ops via Main** — place/cancel when Main decides in-policy (no DK approval, 2026-09-06) |
 
 ### Night rules (hard)
 
@@ -232,7 +232,7 @@ Local **Europe/Madrid** hour at run time:
 
 ### Day rules
 
-Suggest only. Do **not** place/cancel/modify unless explicit user confirmation in chat. Still include paired exit suggestions for open inventory.
+**Ops autonomy (2026-09-06):** after Flow 1 Main decision, place/cancel/modify in-policy under same per-run caps as night (≤$1000 new buys, ≤3 new symbols, Flush/Tier-C/LSR/DD gates). **No DK chat confirmation** for operational tasks. Still include paired exits. Escalate to Main→DK only if outside policy.
 
 ## Logging
 
