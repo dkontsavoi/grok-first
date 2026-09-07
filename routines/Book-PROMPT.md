@@ -246,6 +246,7 @@ Local **Europe/Madrid** hour at run time:
 - **Cancels** of open buy bids this brief marks cancel/replace are allowed at night (do not count against place caps). No cancel-all.
 - Report exactly what was placed/cancelled (prices, sizes, ids) + cumulative night notional in the same notification.
 - On revx auth/place/cancel error: report; at most one careful retry.
+- **Flush:ON night mutate order (M3-flush-a):** cancels first → inventory TPs second → core deepen/FLUSH_MR places last. If Auto-review blocks a mutate, immediately same-cmd retry with `request_smart_mode_approval`; log `pending_approval` + blocked cmd ids in briefs.jsonl; continue the brief (do not abort).
 
 ### Day rules
 
@@ -279,13 +280,22 @@ Self-reflect digests by `strategy_id` (n, hit-rate, avg R). Main calls keep/redu
 
 Concise, trader-useful. Always notify as a **Book brief**. If CMC auth fails repeatedly, say so and pause this routine.
 
-## Flow 3 locks (Selfy-approved — 2026-09-06)
+## Flow 3 locks (Selfy-approved — 2026-09-06 + 2026-09-07)
 
 - **M1a append-or-fail:** After each Book run, append one structured row to `/workspace/crypto-self-reflect/briefs.jsonl`. If append fails → retry once; if still fail, set `log_fail: true` in the notification and treat as a hard Book defect (do not silently skip logging).
-- **M4a greed proximity:** When size_bias is reduce/core-only / F&G greed tape, a `BUY_DIP`/`RS_DIP` zone is actionable only if `zone_hi` is within `max(2.5%, 1×ATR_1h)` of spot; else mark **WATCH/SKIP** (do not night-place far magnets).
+- **M4a-enforce (Selfy 2026-09-07):** For `BUY_DIP`/`RS_DIP` under reduce/core-only / F&G greed (and generally as hard gate): if `spot − zone_hi > max(2.5%, 1.0×ATR_1h)` → **SKIP place** (WATCH only, do not night-place). If `spot − zone_hi > 1.5×ATR_1h` → **omit from top6**. Soft M4a proximity note superseded by this hard gate.
+- **M4b re-anchor:** Only re-anchor/deepen a zone when it is failing the M4a-enforce gate (bring zone up into gate) — never deepen further away from spot under greed/Flush.
 - **M5a RS_DIP wash:** Assign/place `RS_DIP` only after ≥**1×ATR_1h** wash from local high **or** spot already inside the zone. Under size_bias reduce: **no night RS_DIP new symbols**.
 - **M6a schema v1:** Every briefs.jsonl row must include `routine="Book"`, `as_of_madrid`, and `top6[]` objects each with required `strategy_id`, `zone`, `inv`, `size_usd`, `exit`. No legacy `top3`/`top3_dips` as the sole list. Missing `strategy_id` → fix before notify.
-- **M2a ETH soft coaching (DK 2026-09-06):** NO hard prior / no floor `p_bull ≥ p_range`. Soft note only: if ETH shows an 8–24h grind with higher-lows, lean bull vs over-weighting Range — still let tape/Flush/OI decide probabilities.
+- **M2a ETH soft coaching (superseded for sticky cases by M2d):** Soft lean still OK on first grind observation.
+- **M2d sticky ETH prior (Selfy 2026-09-07):** After **2 consecutive** Book runs where ETH `p_bull ≥ p_range` **and** grind criteria hold (8–24h higher-lows / HL grind), set **primary = bull** and keep sticky until (a) ETH 1h lower-low breaks the grind **or** (b) `Flush:ON` with long-liq character — then free re-score. Log `eth_sticky_bull: true|false`.
+- **M2e dual-label (Selfy 2026-09-07):** When `|p_bull − p_range| < 8` (percentage points), log both **primary** and **lean** in the brief + briefs.jsonl. Selfy hit-scoring uses **primary** only.
+
+
+- **M3-flush-a (Selfy 2026-09-07):** When `Flush:ON` at night, **split mutates** in order: (1) cancels / replaces of stale bids → (2) inventory TP sells for unprotected fills → (3) core deepen / FLUSH_MR places **last**. On each Auto-review block of a revx mutate: immediately retry the **same command** with `request_smart_mode_approval` (approval card path). Log `pending_approval: true` + blocked cmd ids / order intents in briefs.jsonl. **Do NOT abort the whole brief** if one mutate is blocked — finish brief + remaining allowed steps.
+- **M3-flush-c HOLD for DK:** standing Flush night pre-approve — **do not implement** until DK locks.
+- **M5-delta (Selfy 2026-09-07):** If a top6 row’s `symbol` + `strategy_id` + `zone` is unchanged vs prior Book → set `unchanged: true`, **no Flow 1 dig**, Selfy unique-count once. `CORE_DCA` may reprint with `unchanged: true`. Need ≥**2 material deltas** (new/changed zone, strategy flip, fill/TP action, Flush flip, cancel/replace) else shrink the actionable Flow 1 list / say KEEP-only.
+- **C6 soft:** under reduce, let PUMP TP1 work / **no PUMP add**; hard `max_single_name` cap **HOLD for DK**.
 
 ## Day ops (DK 2026-09-06 — micromanagement retired)
 
